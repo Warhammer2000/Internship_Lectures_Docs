@@ -9,20 +9,27 @@
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
 
-<nav class="bg-white dark:bg-gray-800 shadow fixed w-full z-10 top-0">
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-        <a href="#" class="text-3xl font-bold text-blue-600 dark:text-blue-400">Документация</a>
-        <button id="dark-mode-toggle" class="text-gray-500 dark:text-gray-300 focus:outline-none rounded-full p-2">
-            <svg id="light-theme-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.02 12.02l-.707.707M6.343 17.657l-.707.707"></path>
-                <circle cx="12" cy="12" r="5"></circle>
-            </svg>
-            <svg id="dark-theme-icon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"></path>
-            </svg>
-        </button>
+    <nav class="bg-white dark:bg-gray-800 shadow fixed w-full z-10 top-0">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-3xl font-bold text-blue-600 dark:text-blue-400">Документация</a>
+            <button id="dark-mode-toggle" class="text-gray-500 dark:text-gray-300 focus:outline-none rounded-full p-2">
+                <svg id="light-theme-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.02 12.02l-.707.707M6.343 17.657l-.707.707"></path>
+                    <circle cx="12" cy="12" r="5"></circle>
+                </svg>
+                <svg id="dark-theme-icon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"></path>
+                </svg>
+            </button>
+        </div>
+    </nav>
+    <div class="container mx-auto px-4 py-16 mt-16">
+        <header class="text-center mb-12">
+            <label for="searchInput" class="text-lg font-semibold text-blue-400">Введите поисковый запрос:</label>
+            <input type="text" id="searchInput" class="w-full mt-2 p-2 rounded bg-gray-800 text-white border border-blue-500" placeholder="Введите ключевое слово...">
+            <ul id="searchResults" class="mt-4 text-lg text-left text-gray-800 dark:text-gray-100"></ul>
+        </header>
     </div>
-</nav>
 
 <div class="container mx-auto px-4 py-16 mt-16">
     <header class="text-center mb-12">
@@ -76,6 +83,50 @@
 </div>
     <!--evwvff-->
 <script>
+       let indexData = {};
+
+// Загружаем JSON-файл
+async function loadIndex() {
+    try {
+        const response = await fetch('search_index.json');
+        indexData = await response.json();
+    } catch (error) {
+        console.error("Ошибка загрузки JSON:", error);
+    }
+}
+
+// Инициализация загрузки JSON-файла при открытии страницы
+window.onload = loadIndex;
+
+// Функция поиска в реальном времени
+document.getElementById('searchInput').addEventListener('input', function() {
+    const keyword = this.value.toLowerCase().trim();
+    const resultsContainer = document.getElementById('searchResults');
+    resultsContainer.innerHTML = ''; // Очищаем результаты
+
+    if (keyword) {
+        Object.keys(indexData).forEach((file) => {
+            indexData[file].forEach((text) => {
+                if (text.toLowerCase().includes(keyword)) {
+                    const resultItem = document.createElement('li');
+                    resultItem.classList.add('bg-blue-100', 'dark:bg-gray-700', 'p-4', 'rounded', 'shadow', 'mb-2');
+                    
+                    resultItem.innerHTML = `
+                        <a href="${file}" class="font-bold text-blue-600 dark:text-blue-400">${file}</a> - ${highlightKeyword(text, keyword)}
+                    `;
+                    resultsContainer.appendChild(resultItem);
+                }
+            });
+        });
+    }
+});
+
+// Функция выделения ключевого слова
+function highlightKeyword(text, keyword) {
+    const regex = new RegExp(`(${keyword})`, 'gi');
+    return text.replace(regex, '<span class="bg-yellow-300 dark:bg-yellow-600">$1</span>');
+}
+
     const toggle = document.getElementById('dark-mode-toggle');
     const lightIcon = document.getElementById('light-theme-icon');
     const darkIcon = document.getElementById('dark-theme-icon');
