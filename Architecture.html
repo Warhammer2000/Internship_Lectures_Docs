@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onion Architecture и Dependency Injection</title>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
+
+<div class="container mx-auto px-4 py-16 mt-16">
+    <header class="text-center mb-12">
+        <h1 class="text-5xl font-bold text-blue-600 dark:text-blue-400">Onion Architecture</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-300 mt-4">Структура и принципы Onion Architecture, слои и их взаимодействие.</p>
+    </header>
+
+    <section class="mb-12">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Основная структура</h2>
+        <p class="text-lg leading-relaxed mb-6">
+            Onion Architecture состоит из нескольких слоёв, каждый из которых независим от других. Основная идея заключается в создании ядра приложения, которое не зависит от внешних слоёв.
+        </p>
+        <div class="flex justify-center">
+            <img src="https://herbertograca.com/wp-content/uploads/2018/11/000-explicit-architecture-svg.png" alt="Основная структура Onion Architecture" class="w-1/2 rounded-lg shadow-lg">
+        </div>
+    </section>
+
+    <!-- Section 2: Поток управления (Flow of Control) -->
+    <section class="mb-12">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Поток управления</h2>
+        <p class="text-lg leading-relaxed mb-6">
+            В Onion Architecture зависимости направлены внутрь. Это означает, что инфраструктура зависит от ядра, а не наоборот.
+        </p>
+        <div class="flex justify-center">
+            <img src="https://herbertograca.com/wp-content/uploads/2018/11/010-explicit-architecture-svg.png" alt="Поток управления в Onion Architecture" class="w-1/2 rounded-lg shadow-lg">
+        </div>
+    </section>
+
+    <!-- Section 3: Основные компоненты и адаптеры -->
+    <section class="mb-12">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Основные компоненты и адаптеры</h2>
+        <p class="text-lg leading-relaxed mb-6">
+            В архитектуре используются первичные и вторичные адаптеры, обеспечивающие взаимодействие между ядром приложения и внешними сервисами, такими как БД или API.
+        </p>
+        <div class="flex justify-center">
+            <img src="https://herbertograca.com/wp-content/uploads/2018/11/030-explicit-architecture-svg.png" alt="Основные компоненты и адаптеры Onion Architecture" class="w-1/2 rounded-lg shadow-lg">
+        </div>
+    </section>
+
+    <!-- Section 4: Полная структура Explicit Architecture -->
+    <section class="mb-12">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Полная структура Explicit Architecture</h2>
+        <p class="text-lg leading-relaxed mb-6">
+            Полная структура включает все слои и компоненты, показывая все зависимости и направления потоков данных между слоями.
+        </p>
+        <div class="flex justify-center">
+            <img src="https://docs.google.com/drawings/d/e/2PACX-1vQ5ps72uaZcEJzwnJbPhzUfEeBbN6CJ04j7hl2i3K2HHatNcsoyG2tgX2vnrN5xxDKLp5Jm5bzzmZdv/pub?w=960&h=657" alt="Полная структура Explicit Architecture" class="w-1/2 rounded-lg shadow-lg">
+        </div>
+    </section>
+
+    <section id="core-layer" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Core Layer (Сердцевина)</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            Core Layer — это основа приложения. Он включает бизнес-логические классы, такие как Domain Entities и Value Objects. Этот слой должен быть полностью независим от других слоёв.
+        </p>
+        <h3 class="text-2xl font-semibold mt-6">Domain Entities и Value Objects</h3>
+        <p class="text-lg leading-relaxed mb-4">
+            <strong>Domain Entities</strong> представляют основные бизнес-концепции, такие как User или Order. <strong>Value Objects</strong> используются для определения значений без уникальной идентификации, например, Money или Address.
+        </p>
+    </section>
+
+    <section id="service-layer" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Service Layer (Сервисный слой)</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            Service Layer содержит бизнес-операции, оперирующие над Domain Entities. Здесь обычно реализуется логика, использующая репозитории и взаимодействующая с Core Layer.
+        </p>
+    </section>
+
+    <section id="infrastructure-layer" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Infrastructure Layer (Инфраструктурный слой)</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            Infrastructure Layer — это слой, отвечающий за взаимодействие с базами данных, сторонними API и другими внешними системами. В этом слое можно использовать паттерны, такие как Repository для доступа к данным.
+        </p>
+    </section>
+
+    <section id="presentation-layer" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Presentation Layer (Слой представления)</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            Presentation Layer обеспечивает взаимодействие с пользователем. Этот слой может представлять собой как интерфейсы API, так и пользовательский интерфейс (UI).
+        </p>
+    </section>
+</div>
+
+</body>
+</html>

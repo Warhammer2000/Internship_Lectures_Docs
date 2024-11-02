@@ -69,7 +69,32 @@
 
     <div class="container mx-auto px-4 py-16 mt-16">
         <h1 class="text-3xl font-semibold text-black-600 dark:text-black-400 mb-6">SQL</h1>
+
+        <section id="optimization" class="mb-10">
+            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Оптимизация SQL-запросов и индексация</h2>
+            <p class="text-lg leading-relaxed mb-4">
+                Индексы играют ключевую роль в повышении производительности SQL-запросов, позволяя ускорить доступ к данным.
+            </p>
+            <img src="/image.png" alt="SQL Optimization Graphs" class="w-full h-auto rounded-lg shadow-lg mb-6">
+            <h3 class="text-2xl font-semibold mt-6">Index Seek и Index Scan</h3>
+            <p class="text-lg leading-relaxed mb-4">
+                <strong>Index Seek</strong> используется для быстрого поиска данных, используя ключевые индексы, в то время как <strong>Index Scan</strong> выполняет полное сканирование индекса.
+            </p>
+            <h3 class="text-2xl font-semibold mt-6">Key Lookup</h3>
+            <p class="text-lg leading-relaxed mb-4">
+                <strong>Key Lookup</strong> выполняется, когда данные не могут быть найдены только по индексу. Это может замедлить выполнение запроса, особенно если записи многократно повторяются.
+            </p>
+            <h3 class="text-2xl font-semibold mt-6">Логический поиск и плотность данных</h3>
+            <p class="text-lg leading-relaxed mb-4">
+                Логический поиск по индексу эффективен при плотности данных до 30%. Использование статистики запросов и параметра <strong>Estimate Cost</strong> позволяет оценить стоимость запроса.
+            </p>
+            <h3 class="text-2xl font-semibold mt-6">Предотвращение SQL-инъекций</h3>
+            <p class="text-lg leading-relaxed mb-4">
+                SQL-инъекции представляют серьёзную угрозу. Использование параметризованных запросов и надёжных методов фильтрации предотвращает инъекции.
+            </p>
+        </section>
         
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">1. Язык структурированных запросов (SQL)</h2>
             <p class="text-lg leading-relaxed">Обзор команд SQL для создания баз данных, работы с таблицами и обработки данных.</p>
@@ -92,7 +117,7 @@
                 );
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">2. Вставка и отображение данных</h2>
             <p class="text-lg leading-relaxed">Добавление записей, извлечение данных и просмотр конкретных столбцов или условий.</p>
@@ -110,7 +135,7 @@
                 SELECT customerid, customernumber, lastname, firstname FROM customer;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6"> 3. Изменение структуры таблицы</h2>
             <p class="text-lg leading-relaxed">Изменение структуры таблицы путем добавления, обновления или удаления столбцов.</p>
@@ -128,7 +153,7 @@
                 DROP COLUMN phonenumber;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">4. Удаление записей и таблиц</h2>
             <p class="text-lg leading-relaxed">Команды для удаления конкретных записей или целых таблиц из базы данных.</p>
@@ -141,7 +166,7 @@
                 DROP TABLE customer;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">5. Изменение типов данных</h2>
             <p class="description">Изменение типов данных столбцов и использование временных преобразований типов данных.</p>
@@ -155,7 +180,7 @@
                 SELECT CONVERT(DATE, '2017-08-25 00:00:00.000');
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">6. Извлечение и фильтрация данных</h2>
             <p class="text-lg leading-relaxed">Использование фильтров и сортировки для извлечения определенных наборов данных.</p>
@@ -177,7 +202,7 @@
                 WHERE customerlastname IN ('Brown', 'Michael', 'Jim');
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">7. Агрегатные функции</h2>
             <p class="text-lg leading-relaxed">Использование агрегатных функций, таких как COUNT, SUM и AVG для суммарной обработки данных.</p>
@@ -196,7 +221,7 @@
                 GROUP BY sale.employeeid, EmployeeFirstName, EmployeeLastName;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">8. Функции работы с датами и временем</h2>
             <p class="text-lg leading-relaxed">Использование SQL-функций для работы с датами и временем.</p>
@@ -216,7 +241,7 @@
                 SELECT AVG(Salary) FROM EmployeeSalary;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">9. Группировка и фильтрация групп с помощью HAVING</h2>
             <p class="text-lg leading-relaxed">Использование GROUP BY и HAVING для группировки данных и фильтрации агрегированных результатов.</p>
@@ -237,7 +262,7 @@
                 ORDER BY [Average Salary];
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">10. Временное преобразование типов данных</h2>
             <p class="text-lg leading-relaxed">Использование временного преобразования типов данных с помощью функций CAST и CONVERT.</p>
@@ -249,7 +274,7 @@
                 SELECT CONVERT(DATE, '2017-08-25 00:00:00.000');
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">11. Условная логика с CASE</h2>
             <p class="text-lg leading-relaxed">Использование оператора CASE для условных выражений в SQL-запросах.</p>
@@ -277,7 +302,7 @@
                 JOIN EmployeeSalary ES ON ED.EmployeeID = ES.EmployeeID;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">12. Разделение данных</h2>
             <p class="text-lg leading-relaxed">Разделение данных для нумерации строк, ранжирования или других вычислений в определенных группах.</p>
@@ -294,7 +319,7 @@
                 ORDER BY JobTitle, SalaryRank;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">13. Подзапросы</h2>
             <p class="text-lg leading-relaxed">Использование подзапросов в SELECT, WHERE и FROM для извлечения или фильтрации данных.</p>
@@ -309,7 +334,7 @@
                 FROM EmployeeSalary
                 WHERE Salary IN (SELECT MAX(Salary) FROM EmployeeSalary);
             </code></pre>
-        </section>        
+        </section>
 
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">14. Самосоединения (Self Joins)</h2>
@@ -328,7 +353,7 @@
         LEFT JOIN staff M ON E.managerID = M.employeeID;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">15. Объединения SQL (Unions)</h2>
             <p class="text-lg leading-relaxed">Использование UNION, UNION ALL, INTERSECT и EXCEPT для объединения или фильтрации нескольких наборов данных.</p>
@@ -354,7 +379,7 @@
         SELECT cust_lname, cust_fname FROM customer_2;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">16. Представления и временные таблицы</h2>
             <p class="text-lg leading-relaxed">Создание представлений и временных таблиц для упрощения сложных запросов и управления временными данными.</p>
@@ -383,7 +408,7 @@
         GROUP BY JobTitle;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">17. Общие табличные выражения (CTE)</h2>
             <p class="text-lg leading-relaxed">Использование CTE для временных наборов данных, упрощающих сложные подзапросы.</p>
@@ -401,7 +426,7 @@
         WHERE TotalGender = (SELECT MIN(TotalGender) FROM CTE_Employee);
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">18. Дублирование и резервное копирование данных</h2>
             <p class="text-lg leading-relaxed">Копирование данных таблицы для создания резервных копий или дублирования структур с данными.</p>
@@ -416,7 +441,7 @@
         ORDER BY customerfirstname + ' ' + customerlastname, inventoryname;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">19. Функции ранжирования SQL</h2>
             <p class="text-lg leading-relaxed">Использование функций ранжирования, таких как ROW_NUMBER, RANK и DENSE_RANK, для присвоения рангов строкам данных.</p>
@@ -437,7 +462,7 @@
         FROM EmployeeSalary;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">20. Функция NTILE</h2>
             <p class="text-lg leading-relaxed">Использование NTILE для разделения результирующего набора на заданное количество групп и присвоения группе ранга.</p>
@@ -454,7 +479,7 @@
         ORDER BY JobTitle, SalaryGroup;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">21. Объединение данных с помощью соединений (Joins)</h2>
             <p class="text-lg leading-relaxed">Использование различных типов соединений для объединения данных из нескольких таблиц на основе отношений.</p>
@@ -482,7 +507,7 @@
         RIGHT JOIN sale ON sale.inventoryid = inventory.inventoryid;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">22. Оператор CASE</h2>
             <p class="text-lg leading-relaxed">Использование оператора CASE для условной логики в SQL-запросах.</p>
@@ -510,7 +535,7 @@
         JOIN EmployeeSalary ES ON ED.EmployeeID = ES.EmployeeID;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">23. Строковые функции</h2>
             <p class="text-lg leading-relaxed">Использование строковых функций SQL, таких как TRIM, REPLACE и SUBSTRING для обработки текста.</p>
@@ -527,7 +552,7 @@
         SELECT SUBSTRING(FirstName, 1, 3) AS FirstNameShort FROM EmployeeErrors;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">24. Хранимые процедуры</h2>
             <p class="text-lg leading-relaxed">Создание хранимых процедур для автоматизации повторяющихся задач или инкапсуляции логики.</p>
@@ -557,7 +582,7 @@
         EXEC Temp_Employee @JobTitle = 'Salesman';
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">25. Подзапросы</h2>
             <p class="text-lg leading-relaxed">Использование подзапросов в SELECT, FROM и WHERE для вложенных запросов.</p>
@@ -579,7 +604,7 @@
         ORDER BY a.EmployeeID;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">26. Соединения без использования ключевого слова JOIN</h2>
             <p class="text-lg leading-relaxed">Использование неявных соединений, указывая несколько таблиц в разделе FROM и связывая с помощью WHERE.</p>
@@ -596,7 +621,7 @@
         GROUP BY sale.inventoryid, inventoryname, saledate, salequantity, saleunitprice;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6"> 27. Разделение и обработка строк</h2>
             <p class="text-lg leading-relaxed">Использование SQL-функций для разделения строк по разделителям и обработки текстовых данных.</p>
@@ -615,7 +640,7 @@
         FROM NashvilleHousing;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">28. Удаление дубликатов записей</h2>
             <p class="text-lg leading-relaxed">Использование ROW_NUMBER и CTE для выявления и удаления дубликатов записей.</p>
@@ -638,7 +663,7 @@
         WHERE row_num > 1;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">29. Функции ранжирования SQL: RANK и DENSE_RANK</h2>
             <p class="text-lg leading-relaxed">Использование RANK и DENSE_RANK для присвоения рангов строкам внутри разделов.</p>
@@ -660,7 +685,7 @@
         ORDER BY JobTitle, SalaryRank;
             </code></pre>
         </section>
-        
+
         <section class="mb-10">
             <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">30. NTILE для группировки данных</h2>
             <p class="text-lg leading-relaxed">Использование NTILE для разделения результатов на указанное количество групп для анализа.</p>
@@ -676,7 +701,7 @@
         FROM EmployeeSalary
         ORDER BY JobTitle, SalaryGroup;
             </code></pre>
-        </section>        
+        </section>
     </div>
     
     <div class="container mx-auto px-4 py-16">
