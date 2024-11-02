@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Стек и Куча в C#</title>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function applyTheme(theme) {
+            const darkThemeIcon = document.getElementById('dark-theme-icon');
+            const lightThemeIcon = document.getElementById('light-theme-icon');
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                darkThemeIcon.classList.add('hidden');
+                lightThemeIcon.classList.remove('hidden');
+                localStorage.theme = 'dark';
+            } else {
+                document.documentElement.classList.remove('dark');
+                lightThemeIcon.classList.add('hidden');
+                darkThemeIcon.classList.remove('hidden');
+                localStorage.theme = 'light';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                applyTheme('dark');
+            } else {
+                applyTheme('light');
+            }
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', function () {
+                if (document.documentElement.classList.contains('dark')) {
+                    applyTheme('light');
+                } else {
+                    applyTheme('dark');
+                }
+            });
+        });
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
+
+<nav class="bg-white dark:bg-gray-800 shadow fixed w-full z-10 top-0">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="#" class="text-2xl font-bold text-blue-600 dark:text-blue-400">Стек и Куча в C#</a>
+        <div class="hidden md:flex space-x-4">
+            <a href="#memory-management" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Управление памятью</a>
+            <a href="#stack" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Стек</a>
+            <a href="#heap" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Куча</a>
+            <a href="#gc" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">GC</a>
+        </div>
+        <!-- Тумблер переключения темы -->
+        <div class="flex items-center">
+            <button id="dark-mode-toggle" class="text-gray-500 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400 rounded-full p-2">
+                <!-- Иконка для светлой темы -->
+                <svg id="light-theme-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.02 12.02l-.707.707M6.343 17.657l-.707.707"></path>
+                    <circle cx="12" cy="12" r="5"></circle>
+                </svg>
+                <!-- Иконка для темной темы -->
+                <svg id="dark-theme-icon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Основной контент -->
+<div class="container mx-auto px-4 py-16 mt-16">
+    <header class="text-center mb-10">
+        <h1 class="text-4xl font-semibold text-blue-600 dark:text-blue-400">Стек и Куча в C#</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-300">Глубокое понимание управления памятью и сборки мусора</p>
+    </header>
+
+    <!-- Управление памятью -->
+    <section id="memory-management" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Управление памятью в стеке и куче</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                <h3 class="text-2xl font-semibold mb-4">Стек</h3>
+                <p>Локальные переменные, ссылки на объекты.</p>
+                <p><strong>LIFO</strong> (Last In, First Out)</p>
+                <p>Автоматическое освобождение памяти.</p>
+            </div>
+            <div class="bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                <h3 class="text-2xl font-semibold mb-4">Куча</h3>
+                <p>Объекты ссылочных типов: классы, строки, массивы.</p>
+                <p>Управляется сборщиком мусора (GC).</p>
+                <p>Динамическое выделение памяти.</p>
+            </div>
+            <div class="bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                <h3 class="text-2xl font-semibold mb-4">GC</h3>
+                <p>Автоматическое управление памятью.</p>
+                <p>Маркировка, очистка и компактизация объектов.</p>
+                <p>Работа с поколениями объектов.</p>
+            </div>
+        </div>
+        <p class="text-lg mt-8 leading-relaxed">Стек используется для хранения локальных переменных и ссылок на объекты. Управляется по принципу <strong>LIFO</strong>. Куча хранит объекты ссылочных типов и управляется сборщиком мусора. Эти механизмы позволяют эффективно управлять памятью и освобождать её при необходимости.</p>
+    </section>
+
+    <!-- Стек -->
+    <section id="stack" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Стек</h2>
+        <p class="text-lg leading-relaxed">В стеке хранятся:</p>
+        <ul class="list-disc pl-6 space-y-2">
+            <li>Локальные переменные значимых типов.</li>
+            <li>Параметры методов значимых типов.</li>
+            <li>Ссылки на объекты ссылочных типов.</li>
+        </ul>
+        <h3 class="text-2xl font-semibold mt-8">Особенности стека:</h3>
+        <ul class="list-disc pl-6 space-y-2">
+            <li>Работает по принципу <strong>LIFO</strong> (Last In, First Out).</li>
+            <li>Имеет ограниченный размер (обычно около 1 МБ по умолчанию).</li>
+            <li>Быстрый доступ к данным.</li>
+            <li>Память освобождается автоматически при выходе из области видимости.</li>
+        </ul>
+    </section>
+
+    <!-- Куча -->
+    <section id="heap" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Куча</h2>
+        <p class="text-lg leading-relaxed">В куче хранятся:</p>
+        <ul class="list-disc pl-6 space-y-2">
+            <li>Объекты ссылочных типов.</li>
+            <li>Значимые типы внутри объектов ссылочных типов (поля классов).</li>
+            <li>Массивы, независимо от того, содержат ли они значимые или ссылочные типы.</li>
+            <li>Закрытые переменные в замыканиях (лямбда-выражения, анонимные методы).</li>
+        </ul>
+        <h3 class="text-2xl font-semibold mt-8">Особенности кучи:</h3>
+        <ul class="list-disc pl-6 space-y-2">
+            <li>Управляется сборщиком мусора (GC).</li>
+            <li>Динамический размер, зависит от доступной памяти системы.</li>
+            <li>Более медленный доступ по сравнению со стеком.</li>
+            <li>Память освобождается сборщиком мусора, когда объекты становятся недостижимыми.</li>
+        </ul>
+    </section>
+
+    <!-- Сборщик мусора (GC) -->
+    <section id="gc" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Принципы работы сборщика мусора (GC)</h2>
+        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 mb-6">
+            <h3 class="text-2xl font-semibold mb-4">Цели GC</h3>
+            <p class="text-lg leading-relaxed">GC освобождает память автоматически, освобождая разработчика от ручного управления памятью.</p>
+            <ul class="list-disc pl-6 space-y-2">
+                <li>Освобождение недостижимых объектов.</li>
+                <li>Обеспечение производительности и минимизация фрагментации памяти.</li>
+            </ul>
+        </div>
+        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
+            <h3 class="text-2xl font-semibold mb-4">Алгоритм GC</h3>
+            <ul class="list-disc pl-6 space-y-2">
+                <li><strong>Маркировка:</strong> Помечаются все достижимые объекты.</li>
+                <li><strong>Очистка:</strong> Удаляются объекты, не помеченные как достижимые.</li>
+                <li><strong>Компактизация:</strong> Свободная память объединяется для улучшения её использования.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Поколения в GC -->
+    <section id="gc-generations" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Поколения в GC</h2>
+        <table class="min-w-full bg-white dark:bg-gray-800 border-collapse">
+            <thead>
+                <tr>
+                    <th class="border-b-2 border-gray-200 dark:border-gray-700 p-4 text-left text-blue-600 dark:text-blue-400">Поколение</th>
+                    <th class="border-b-2 border-gray-200 dark:border-gray-700 p-4 text-left text-blue-600 dark:text-blue-400">Описание</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="border-b border-gray-200 dark:border-gray-700 p-4">Поколение 0</td>
+                    <td class="border-b border-gray-200 dark:border-gray-700 p-4">Новые объекты, сборка мусора происходит чаще.</td>
+                </tr>
+                <tr>
+                    <td class="border-b border-gray-200 dark:border-gray-700 p-4">Поколение 1</td>
+                    <td class="border-b border-gray-200 dark:border-gray-700 p-4">Объекты, пережившие сборку мусора поколения 0.</td>
+                </tr>
+                <tr>
+                    <td class="border-b border-gray-200 dark:border-gray-700 p-4">Поколение 2</td>
+                    <td class="border-b border-gray-200 dark:border-gray-700 p-4">Долгоживущие объекты, сборка происходит реже.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Графическое представление стека и кучи -->
+    <section id="memory-diagram" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Графическое представление стека и кучи</h2>
+        <div class="graph">
+            <img class="border-4 border-blue-600 dark:border-blue-400 rounded-lg shadow-lg" src="https://www.rusoaica.com/wp-content/uploads/img_5b73d7f592aa2.png" alt="Графическое представление стека и кучи">
+        </div>
+    </section>
+
+    <!-- Финализация объектов и IDisposable -->
+    <section id="finalization" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Финализация объектов и интерфейс IDisposable</h2>
+        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 mb-6">
+            <h3 class="text-2xl font-semibold mb-4">Финализаторы</h3>
+            <p class="text-lg leading-relaxed">Финализаторы используются для очистки неуправляемых ресурсов, но они увеличивают время жизни объектов и снижают производительность. Предпочтительным является использование <strong>IDisposable</strong> и паттерна <strong>Dispose</strong>.</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
+            <h3 class="text-2xl font-semibold mb-4">Интерфейс IDisposable</h3>
+            <p class="text-lg leading-relaxed">Позволяет разработчику явно освобождать ресурсы. В C# удобно использовать блок <strong>using</strong>, который автоматически вызывает <code>Dispose()</code>.</p>
+        </div>
+    </section>
+
+    <!-- Практические рекомендации -->
+    <section id="best-practices" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Практические рекомендации для оптимизации памяти</h2>
+        <ul class="list-disc pl-6 space-y-2">
+            <li>Избегайте ручного вызова <code>GC.Collect()</code>, доверяя CLR.</li>
+            <li>Используйте <strong>IDisposable</strong> и <strong>using</strong> для освобождения ресурсов.</li>
+            <li>Профилируйте приложение для выявления утечек памяти.</li>
+        </ul>
+    </section>
+
+    <!-- Работа с большими объектами (LOH) -->
+    <section id="loh" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Работа GC с большими объектами и LOH</h2>
+        <p class="text-lg leading-relaxed">Объекты размером более 85 000 байт попадают в Large Object Heap (LOH), который не компактизируется. Это может приводить к фрагментации памяти, и для оптимизации рекомендуется избегать частого создания и удаления крупных объектов.</p>
+    </section>
+
+    <!-- Многопоточные приложения и GC -->
+    <section id="multithreading" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Рекомендации для многопоточных приложений</h2>
+        <p class="text-lg leading-relaxed">GC в .NET потокобезопасен, но разработчикам необходимо быть внимательными при работе с объектами, разделяемыми между потоками. Использование слабых ссылок (Weak References) может помочь избежать удержания ненужных объектов в памяти.</p>
+    </section>
+
+</div>
+
+<footer class="text-center bg-blue-600 dark:bg-blue-400 text-white dark:text-gray-900 py-6 mt-10 rounded-lg">
+  2023 Стек и Куча в C#
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serilog Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
+
+<!-- Навигация -->
+<nav class="bg-white dark:bg-gray-800 shadow fixed w-full z-10 top-0">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="#" class="text-2xl font-bold text-blue-600 dark:text-blue-400">Serilog Guide</a>
+        <div class="hidden md:flex space-x-4">
+            <a href="#introduction" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Введение</a>
+            <a href="#configuration" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Конфигурация</a>
+            <a href="#sinks" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Sinks</a>
+            <a href="#usage" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Использование</a>
+        </div>
+        <!-- Тумблер переключения темы -->
+        <div class="flex items-center">
+            <button id="dark-mode-toggle" class="text-gray-500 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400 rounded-full p-2">
+                <!-- Иконка для светлой темы -->
+                <svg id="light-theme-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.02 12.02l-.707.707M6.343 17.657l-.707.707"></path>
+                    <circle cx="12" cy="12" r="5"></circle>
+                </svg>
+                <!-- Иконка для темной темы -->
+                <svg id="dark-theme-icon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M21 12.79A9 9 0 11 11.21 3a7 7 0 009.79 9.79z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Основной контент -->
+<div class="container mx-auto px-4 py-16 mt-16">
+    <header class="text-center mb-10">
+        <h1 class="text-4xl font-semibold text-blue-600 dark:text-blue-400">Руководство по Serilog</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-300">Подробное описание конфигурации и использования Serilog в .NET</p>
+    </header>
+
+    <!-- Введение -->
+    <section id="introduction" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Введение</h2>
+        <p class="text-lg leading-relaxed">
+            <strong>Serilog</strong> — это библиотека журналирования для .NET, обеспечивающая структурированное логирование. Она позволяет записывать логи в различных форматах и отправлять их в различные хранилища (Sinks).
+        </p>
+    </section>
+
+    <!-- Конфигурация -->
+    <section id="configuration" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Конфигурация Serilog</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            Конфигурация Serilog может быть выполнена программно или с помощью конфигурационных файлов. Вот пример программной конфигурации:
+        </p>
+        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+// Установка глобального логгера
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+// Использование логгера
+Log.Information("Приложение запущено");
+Log.CloseAndFlush();
+        </code></pre>
+        <p class="text-lg leading-relaxed mt-4">
+            В этом примере мы настроили Serilog для вывода логов в консоль и файл с ежедневным разделением (rolling).
+        </p>
+    </section>
+
+    <!-- Sinks -->
+    <section id="sinks" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Sinks в Serilog</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            <strong>Sinks</strong> — это конечные точки, куда Serilog отправляет логи. Существует множество встроенных и сторонних Sink, некоторые из них:
+        </p>
+        <ul class="list-disc pl-6 space-y-2">
+            <li><strong>Console</strong>: вывод логов в консоль.</li>
+            <li><strong>File</strong>: запись логов в файл.</li>
+            <li><strong>Seq</strong>: отправка логов в Seq сервер для структурированного просмотра.</li>
+            <li><strong>Elasticsearch</strong>: отправка логов в Elasticsearch для индексирования и поиска.</li>
+            <li><strong>MSSqlServer</strong>: запись логов в базу данных SQL Server.</li>
+            <li><strong>RollingFile</strong>: создание файлов логов с разделением по дате или размеру.</li>
+            <li><strong>Email</strong>: отправка логов по электронной почте.</li>
+        </ul>
+        <p class="text-lg leading-relaxed mt-4">
+            Чтобы использовать Sink, необходимо установить соответствующий пакет NuGet и добавить его в конфигурацию Serilog.
+        </p>
+    </section>
+
+    <!-- Использование Serilog -->
+    <section id="usage" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Использование Serilog в приложении</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            Serilog интегрируется с .NET приложениями различными способами. Рассмотрим пример использования в ASP.NET Core приложении:
+        </p>
+        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+// В Program.cs
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .WriteTo.File("logs/webapp.txt", rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+
+        try
+        {
+            Log.Information("Запуск веб-приложения");
+            CreateHostBuilder(args).Build().Run();
+        }
+        catch (Exception ex)
+        {
+            Log.Fatal(ex, "Приложение завершилось с ошибкой");
+        }
+        finally
+        {
+            Log.CloseAndFlush();
+        }
+    }
+
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .UseSerilog() // Добавляем Serilog
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+            });
+}
+        </code></pre>
+        <p class="text-lg leading-relaxed mt-4">
+            В этом примере мы настроили Serilog и заменили встроенный логгер ASP.NET Core на Serilog с помощью метода <code>UseSerilog()</code>.
+        </p>
+    </section>
+
+    <!-- LoggerMessage и частичные методы -->
+    <section id="loggermessage" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Оптимизация логирования с LoggerMessage</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            Для повышения производительности логирования можно использовать статические частичные классы и методы с атрибутом <code>[LoggerMessage]</code>. Вот пример:
+        </p>
+        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+public static partial class LogMessages
+{
+    private static readonly Action&lt;ILogger, Exception&gt; FailedToProcessWorkItem = LoggerMessage.Define(
+        LogLevel.Critical,
+        new EventId(13, nameof(FailedToProcessWorkItem)),
+        "Epic failure processing item!");
+
+    [LoggerMessage(
+        EventId = 0,
+        Level = LogLevel.Information,
+        Message = "Hello World! Logging is {Description}.")]
+    public static partial void LogStartupMessage(this ILogger logger, string description);
+}
+        </code></pre>
+        <p class="text-lg leading-relaxed mt-4">
+            В этом примере мы определяем статические методы для логирования с предопределёнными сообщениями и уровнями логирования. Это помогает избежать лишних аллокаций и повышает производительность.
+        </p>
+    </section>
+    <section id="high-performance" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Высокопроизводительное логирование в .NET</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            В .NET для повышения производительности логирования рекомендуется минимизировать объём создаваемых объектов и избегать аллокаций в критичных местах. Использование <code>LoggerMessage</code> позволяет предварительно подготовить шаблоны сообщений, что снижает накладные расходы на их создание во время выполнения.
+        </p>
+    
+        <!-- Пример 1: LoggerMessage.Define с несколькими параметрами -->
+        <h4 class="text-2xl font-semibold text-blue-500 dark:text-blue-300 mt-8 mb-4">Пример 1: Использование LoggerMessage.Define</h4>
+        <p class="text-lg leading-relaxed mb-4">
+            Метод <code>LoggerMessage.Define</code> позволяет создать шаблон лог-сообщения с параметрами, которые будут подставлены при вызове логирования. Это помогает избежать аллокаций строк при каждом вызове логирования.
+        </p>
+        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+    private static readonly Action&lt;ILogger, int, string, Exception&gt; UserLoginAttempt =
+        LoggerMessage.Define&lt;int, string&gt;(
+            LogLevel.Information,
+            new EventId(101, nameof(UserLoginAttempt)),
+            "User {UserId} attempted login with status {Status}");
+    
+    public static void LogUserLoginAttempt(ILogger logger, int userId, string status)
+    {
+        UserLoginAttempt(logger, userId, status, null);
+    }
+    
+    // Использование:
+    LogUserLoginAttempt(logger, 42, "Success");
+        </code></pre>
+        <p class="text-lg leading-relaxed mt-4">
+            В этом примере мы создаем метод <code>LogUserLoginAttempt</code>, который подготавливает сообщение для логирования, включая параметры <code>UserId</code> и <code>Status</code>, не создавая строку каждый раз заново.
+        </p>
+    
+        <!-- Пример 2: Частичные методы с LoggerMessage для улучшения производительности -->
+        <h4 class="text-2xl font-semibold text-blue-500 dark:text-blue-300 mt-8 mb-4">Пример 2: Использование частичных методов с LoggerMessage</h4>
+        <p class="text-lg leading-relaxed mb-4">
+            Частичные методы позволяют определять лог-сообщения с предопределёнными уровнями логирования и форматами сообщений. Это упрощает вызов логирования и снижает затраты на выполнение.
+        </p>
+        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+    public static partial class LogMessages
+    {
+        [LoggerMessage(
+            EventId = 102,
+            Level = LogLevel.Warning,
+            Message = "Failed attempt to access resource {ResourceName} by user {UserId}")]
+        public static partial void LogAccessAttempt(this ILogger logger, string resourceName, int userId);
+    }
+    
+    // Использование:
+    logger.LogAccessAttempt("RestrictedArea", 42);
+        </code></pre>
+        <p class="text-lg leading-relaxed mt-4">
+            Здесь используется частичный метод <code>LogAccessAttempt</code>, который добавляет предопределённое сообщение и параметры, такие как <code>ResourceName</code> и <code>UserId</code>. Это помогает избежать затрат на форматирование строки при каждом вызове.
+        </p>
+    
+        <!-- Пример 3: LoggerMessage.Define с динамическими параметрами для сложных сценариев -->
+        <h4 class="text-2xl font-semibold text-blue-500 dark:text-blue-300 mt-8 mb-4">Пример 3: Логирование с динамическими параметрами</h4>
+        <p class="text-lg leading-relaxed mb-4">
+            В сложных сценариях можно использовать <code>LoggerMessage.Define</code> с несколькими параметрами для логирования детализированных сообщений.
+        </p>
+        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+    private static readonly Action&lt;ILogger, string, int, string, Exception&gt; ProcessItemError =
+        LoggerMessage.Define&lt;string, int, string&gt;(
+            LogLevel.Error,
+            new EventId(103, nameof(ProcessItemError)),
+            "Error processing item {ItemId} for user {UserId} with status {Status}");
+    
+    public static void LogProcessItemError(ILogger logger, string itemId, int userId, string status)
+    {
+        ProcessItemError(logger, itemId, userId, status, null);
+    }
+    
+    // Использование:
+    LogProcessItemError(logger, "Item42", 7, "Failed");
+        </code></pre>
+        <p class="text-lg leading-relaxed mt-4">
+            Этот подход позволяет логировать ошибки с динамическими параметрами, такими как <code>ItemId</code>, <code>UserId</code> и <code>Status</code>, используя заранее подготовленный шаблон для повышения производительности.
+        </p>
+    </section>
+    
+    
+    <section id="ca1848" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Рекомендация CA1848: Использование шаблонов с LoggerMessage</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            Рекомендация <strong>CA1848</strong> из анализа кода .NET рекомендует использовать <code>LoggerMessage</code> для логирования, чтобы улучшить производительность, избегая лишних аллокаций. Это особенно актуально для частого логирования, где создание строковых сообщений вручную может приводить к значительным затратам памяти и процессорного времени.
+        </p>
+        <p class="text-lg leading-relaxed">
+            Следование CA1848 помогает оптимизировать логирование и сделать код более эффективным в высоконагруженных приложениях.
+        </p>
+    </section>
+    
+    <section id="define-method" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Метод LoggerMessage.Define</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            Метод <code>LoggerMessage.Define</code> используется для создания шаблонов сообщений с предопределёнными уровнями логирования и параметрами. Он позволяет определить сообщение, которое затем можно вызывать с нужными параметрами, минимизируя накладные расходы на создание строки.
+        </p>
+        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+    private static readonly Action&lt;ILogger, int, string, Exception&gt; UserLoggedIn =
+        LoggerMessage.Define&lt;int, string&gt;(
+            LogLevel.Information,
+            new EventId(1, nameof(UserLoggedIn)),
+            "User {UserId} logged in with role {UserRole}");
+            
+    // Использование
+    UserLoggedIn(logger, userId, userRole, null);
+        </code></pre>
+        <p class="text-lg leading-relaxed mt-4">
+            Этот подход особенно полезен для многократно повторяющихся сообщений и позволяет сделать логирование более структурированным и эффективным.
+        </p>
+    </section>
+    
+    <section id="logging-in-net" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Логирование в .NET</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            В .NET платформа логирования основана на <code>Microsoft.Extensions.Logging</code> и предоставляет единый интерфейс для всех логов. Это позволяет использовать различные реализации логирования (например, <strong>Serilog</strong> или <strong>Log4Net</strong>) без изменения бизнес-логики приложения.
+        </p>
+        <p class="text-lg leading-relaxed">
+            При разработке высоконагруженных приложений рекомендуется использовать <strong>LoggerMessage</strong> для оптимизации производительности и структурирования сообщений, что также облегчает последующий анализ данных.
+        </p>
+    </section>
+    
+</div>
+
+<!-- Скрипт для переключения темы -->
+<script>
+    // Переключение между светлой и темной темами
+    const toggle = document.getElementById('dark-mode-toggle');
+    const lightIcon = document.getElementById('light-theme-icon');
+    const darkIcon = document.getElementById('dark-theme-icon');
+
+    toggle.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        lightIcon.classList.toggle('hidden');
+        darkIcon.classList.toggle('hidden');
+    });
+</script>
+
+</body>
+</html>

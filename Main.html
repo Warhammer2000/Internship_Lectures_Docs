@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документация по проекту</title>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
+
+<nav class="bg-white dark:bg-gray-800 shadow fixed w-full z-10 top-0">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="#" class="text-3xl font-bold text-blue-600 dark:text-blue-400">Документация</a>
+        <button id="dark-mode-toggle" class="text-gray-500 dark:text-gray-300 focus:outline-none rounded-full p-2">
+            <svg id="light-theme-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.02 12.02l-.707.707M6.343 17.657l-.707.707"></path>
+                <circle cx="12" cy="12" r="5"></circle>
+            </svg>
+            <svg id="dark-theme-icon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"></path>
+            </svg>
+        </button>
+    </div>
+</nav>
+
+<div class="container mx-auto px-4 py-16 mt-16">
+    <header class="text-center mb-12">
+        <h1 class="text-5xl font-bold text-blue-600 dark:text-blue-400">Документация проекта</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-300 mt-4">Добро пожаловать в документацию, собранную для вашего проекта. Выберите тему, чтобы узнать больше.</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <a href="SQL.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
+            <h2 class="text-2xl font-semibold mb-4">SQL Guide</h2>
+            <p>Основные команды SQL для создания и управления базами данных.</p>
+        </a>
+
+        <a href="Angular.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
+            <h2 class="text-2xl font-semibold mb-4">Angular Guide</h2>
+            <p>Основные концепции Angular, включая модули и маршрутизацию.</p>
+        </a>
+
+        <a href="Asynchronous.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
+            <h2 class="text-2xl font-semibold mb-4">Asynchronous programming</h2>
+            <p>Руководство по асинхронности в C# и ASP.NET Core.</p>
+        </a>
+
+        <a href="EF_Core.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
+            <h2 class="text-2xl font-semibold mb-4">Entity Framework Core</h2>
+            <p>Обзор Entity Framework Core для работы с базами данных.</p>
+        </a>
+
+        <a href="Value_Reference.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
+            <h2 class="text-2xl font-semibold mb-4">Data Types: Value and Reference</h2>
+            <p>Сравнение значимых и ссылочных типов в C#.</p>
+        </a>
+
+        <!-- Новая ссылка на Logger.html -->
+        <a href="Logger.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
+            <h2 class="text-2xl font-semibold mb-4">Logger Guide</h2>
+            <p>Подробное руководство по конфигурации Serilog и созданию логов.</p>
+        </a>
+
+        <!-- Новая ссылка на Middleware.html -->
+        <a href="Middleware.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
+            <h2 class="text-2xl font-semibold mb-4">Middleware Guide</h2>
+            <p>Описание Middleware в ASP.NET Core и создание кастомных компонентов.</p>
+        </a>
+    </div>
+</div>
+
+<script>
+    const toggle = document.getElementById('dark-mode-toggle');
+    const lightIcon = document.getElementById('light-theme-icon');
+    const darkIcon = document.getElementById('dark-theme-icon');
+
+    toggle.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        lightIcon.classList.toggle('hidden');
+        darkIcon.classList.toggle('hidden');
+    });
+</script>
+
+</body>
+</html>

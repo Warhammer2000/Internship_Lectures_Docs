@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обзор Entity Framework</title>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Проверка на сохраненную тему и ее применение
+        function applyTheme(theme) {
+            const darkThemeIcon = document.getElementById('dark-theme-icon');
+            const lightThemeIcon = document.getElementById('light-theme-icon');
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                darkThemeIcon.classList.add('hidden');
+                lightThemeIcon.classList.remove('hidden');
+                localStorage.theme = 'dark';
+            } else {
+                document.documentElement.classList.remove('dark');
+                lightThemeIcon.classList.add('hidden');
+                darkThemeIcon.classList.remove('hidden');
+                localStorage.theme = 'light';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Установка текущей темы
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                applyTheme('dark');
+            } else {
+                applyTheme('light');
+            }
+
+            // Обработка переключения темы
+            document.getElementById('dark-mode-toggle').addEventListener('click', function () {
+                if (document.documentElement.classList.contains('dark')) {
+                    applyTheme('light');
+                } else {
+                    applyTheme('dark');
+                }
+            });
+        });
+    </script>
+        <style>
+            .nav-link {
+                padding: 0.75rem 1.5rem;
+                font-size: 1.1rem;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                border-radius: 0.375rem;
+                font-weight: 500;
+            }
+            .nav-link:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                transform: translateY(-3px);
+            }
+            .nav-link-active {
+                font-weight: 600;
+                color: #2563eb;
+                border-bottom: 2px solid #2563eb;
+            }
+        </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
+
+<!-- Навигационная панель -->
+<nav class="bg-white dark:bg-gray-800 shadow fixed w-full z-10 top-0">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="#" class="text-2xl font-bold text-blue-600 dark:text-blue-400">Обзор Entity Framework</a>
+       
+       
+        <!-- Тумблер переключения темы -->
+        <div class="flex items-center">
+            <button id="dark-mode-toggle" class="text-gray-500 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400 rounded-full p-2">
+                <!-- Иконка для светлой темы -->
+                <svg id="light-theme-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.02 12.02l-.707.707M6.343 17.657l-.707.707"></path>
+                    <circle cx="12" cy="12" r="5"></circle>
+                </svg>
+                <!-- Иконка для темной темы -->
+                <svg id="dark-theme-icon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Основной контент -->
+<div class="container mx-auto px-4 py-16 mt-16">
+    <header class="text-center mb-10">
+        <h1 class="text-4xl font-semibold text-blue-600 dark:text-blue-400">Обзор Entity Framework</h1>
+    </header>
+
+    <section id="section1" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">1. Обзор Entity Framework</h2>
+        <p class="text-lg leading-relaxed">Entity Framework (EF) — это ORM (Object-Relational Mapping) для .NET, который позволяет разработчикам работать с базой данных через объекты .NET вместо написания SQL-запросов напрямую.</p>
+        <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
+            <li>Абстракция от деталей базы данных.</li>
+            <li>Удобный API для работы с данными.</li>
+            <li>Поддержка различных СУБД (SQL Server, MySQL, PostgreSQL и др.).</li>
+        </ul>
+    </section>
+
+    <section id="section2" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">2. Архитектура и принципы работы</h2>
+        <p class="text-lg leading-relaxed">Entity Framework построен вокруг следующих компонентов:</p>
+        <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
+            <li><strong>DbContext:</strong> Основной класс для взаимодействия с базой данных, управляет соединениями, объектами и транзакциями.</li>
+            <li><strong>DbSet<TEntity>:</
+                <li><strong>DbSet&lt;TEntity&gt;:</strong> Представляет коллекцию объектов определенного типа, соответствующих таблице базы данных.</li>
+                <li><strong>Модель данных:</strong> Определяет, как классы .NET сопоставляются с таблицами в базе данных.</li>
+            </ul>
+            <p>Основные принципы EF включают конвенции и конфигурации (через атрибуты или Fluent API) для работы с моделями и таблицами.</p>
+        </section>
+    
+        <section id="section3" class="mb-10">
+            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">3. Режимы работы</h2>
+            <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
+                <li><strong>Code First:</strong> Модели создаются в коде, EF генерирует базу данных. Поддерживает миграции для управления схемой базы данных.</li>
+                <li><strong>Database First:</strong> Используется существующая база данных, на основе которой генерируются модели.</li>
+                <li><strong>Model First:</strong> Модели создаются в графическом интерфейсе, затем генерируются базы данных и классы.</li>
+            </ul>
+        </section>
+    
+        <section id="section4" class="mb-10">
+            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">4. Контекст данных (DbContext) и DbSet</h2>
+            <p><strong>DbContext</strong> управляет соединением с базой данных и транзакциями:</p>
+            <div class="bg-gray-100 dark:bg-gray-800 border-l-4 border-blue-600 dark:border-blue-400 p-4 my-4 text-sm text-gray-800 dark:text-gray-300 font-mono">
+                <code>
+    public class MyDbContext : DbContext
+    {
+        public DbSet&lt;User&gt; Users { get; set; }
+        public DbSet&lt;Order&gt; Orders { get; set; }
+    
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Конфигурации моделей
+        }
+    }
+                </code>
+            </div>
+            <p><strong>DbSet</strong> представляет таблицу в базе данных. Операции с данными включают добавление, удаление и обновление.</p>
+        </section>
+    
+        <section id="section5" class="mb-10">
+            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">5. Миграции и управление схемой базы данных</h2>
+            <p>Миграции позволяют управлять изменениями схемы базы данных на протяжении разработки:</p>
+            <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
+                <li>Создание миграции: <code class="text-red-500 dark:text-red-400 bg-gray-100 dark:bg-gray-800 rounded px-2 py-1">Add-Migration MigrationName</code></li>
+                <li>Применение миграций: <code class="text-red-500 dark:text-red-400 bg-gray-100 dark:bg-gray-800 rounded px-2 py-1">Update-Database</code></li>
+                <li>Откат миграции: <code class="text-red-500 dark:text-red-400 bg-gray-100 dark:bg-gray-800 rounded px-2 py-1">Remove-Migration</code></li>
+            </ul>
+        </section>
+    
+        <section id="section6" class="mb-10">
+            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">6. Отслеживание изменений и жизненный цикл объектов</h2>
+            <p>EF отслеживает состояния объектов (Added, Modified, Unchanged, Deleted, Detached). Вы можете использовать <code class="text-red-500 dark:text-red-400 bg-gray-100 dark:bg-gray-800 rounded px-2 py-1">AsNoTracking()</code> для отключения отслеживания, чтобы повысить производительность при чтении данных.</p>
+        </section>
+    
+        <section id="section7" class="mb-10">
+            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">7. Загрузка данных</h2>
+            <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
+                <li><strong>Eager Loading:</strong> Загрузка связанных данных сразу с основным объектом с помощью <code class="text-red-500 dark:text-red-400 bg-gray-100 dark:bg-gray-800 rounded px-2 py-1">Include()</code>.</li>
+                <li><strong>Lazy Loading:</strong> Отложенная загрузка данных по запросу. Настраивается через виртуальные свойства.</li>
+                <li><strong>Explicit Loading:</strong> Явная загрузка данных через методы <code class="text-red-500 dark:text-red-400 bg-gray-100 dark:bg-gray-800 rounded px-2 py-1">Entry()</code>, <code class="text-red-500 dark:text-red-400 bg-gray-100 dark:bg-gray-800 rounded px-2 py-1">Collection()</code> или <code class="text-red-500 dark:text-red-400 bg-gray-100 dark:bg-gray-800 rounded px-2 py-1">Reference()</code>.</li>
+            </ul>
+        </section>
+    
+        <section id="section8" class="mb-10">
+            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">8. Работа с отношениями</h2>
+            <p>EF поддерживает отношения One-to-One, One-to-Many, Many-to-Many. Настройки могут быть сделаны через Fluent API или атрибуты данных.</p>
+            <div class="bg-gray-100 dark:bg-gray-800 border-l-4 border-blue-600 dark:border-blue-400 p-4 my-4 text-sm text-gray-800 dark:text-gray-300 font-mono">
+                <code>
+    modelBuilder.Entity&lt;User&gt;()
+        .HasMany(u => u.Orders)
+        .WithOne(o => o.User);
+                </code>
+            </div>
+        </section>
+    
+        <section id="section9" class="mb-10">
+            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">9. LINQ to Entities и запросы</h2>
+            <p>LINQ to Entities позволяет строить запросы к базе данных через C#:</p>
+            <div class="bg-gray-100 dark:bg-gray-800 border-l-4 border-blue-600 dark:border-blue-400 p-4 my-4 text-sm text-gray-800 dark:text-gray-300 font-mono">
+                <code>
+    var users = context.Users.Where(u => u.Age &gt; 18).ToList();
+                </code>
+            </div>
+        </section>
+    
+        <section id="section10" class="mb-10">
+            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">10. Транзакции и конкуренция</h2>
+            <p>Транзакции помогают гарантировать согласованность данных. EF поддерживает как неявные транзакции при вызове <code class="text-red-500 dark:text-red-400 bg-gray-100 dark:bg-gray-800 rounded px-2 py-1">SaveChanges()</code>, так и явные транзакции для более сложных сценариев.</p>
+            <div class="bg-gray-100 dark:bg-gray-800 border-l-4 border-blue-600 dark:border-blue-400 p-4 my-4 text-sm text-gray-800 dark:text-gray-300 font-mono">
+                <code>
+    using var transaction = context.Database.BeginTransaction();
+    try
+    {
+        context.SaveChanges();
+        transaction.Commit();
+    }
+    catch
+    {
+        transaction.Rollback();
+        throw;
+    }
+                </code>
+            </div>
+        </section>
+    
+        <section id="section11" class="mb-10">
+            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">11. Производительность и оптимизация</h2>
+            <p>EF позволяет оптимизировать работу с данными через отключение отслеживания (<code class="text-red-500 dark:text-red-400 bg-gray-100 dark:bg-gray-800 rounded px-2 py-1">AsNoTracking()</code>), пакетную обработку, использование кэширования и профилирование запросов.</p>
+        </section>
+    
+        <section id="section12" class="mb-10">
+            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">12. Расширяемость и пользовательские конфигурации</h2>
+            <p>Fluent API и атрибуты данных позволяют гибко настраивать модели и конфигурации сущностей в EF.</p>
+            <div class="bg-gray-100 dark:bg-gray-800 border-l-4 border-blue-600 dark:border-blue-400 p-4 my-4 text-sm text-gray-800 dark:text-gray-300 font-mono">
+                <code>
+    modelBuilder.Entity&lt;User&gt;()
+        .HasIndex(u => u.Email)
+        .IsUnique();
+                </code>
+            </div>
+        </section>
+    
+        <section id="section13" class="mb-10">
+            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">13. Часто задаваемые вопросы на собеседованиях</h2>
+            <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
+                <li>Что такое Entity Framework и как он работает?</li>
+                <li>Объясните разницу между Code First и Database First.</li>
+                <li>Как работает отслеживание изменений в EF?</li>
+                <li>Что такое Lazy Loading и как его отключить?</li>
+            </ul>
+        </section>
+    
+        <section id="section14" class="mb-10">
+            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">14. Практические советы</h2>
+            <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
+                <li>Профилируйте запросы с помощью SQL-профилировщиков.</li>
+                <li>Используйте <code class="text-red-500 dark:text-red-400 bg-gray-100 dark:bg-gray-800 rounded px-2 py-1">Include()</code> осторожно, чтобы не создавать избыточные запросы.</li>
+                <li>Управляйте жизненным циклом <code class="text-red-500 dark:text-red-400 bg-gray-100 dark:bg-gray-800 rounded px-2 py-1">DbContext</code> для лучшей производительности.</li>
+            </ul>
+        </section>
+    
+    </div>
+    
+    <footer class="text-center bg-blue-600 dark:bg-blue-400 text-white dark:text-gray-900 py-6 mt-10 rounded-lg">
+      2023 Обзор Entity Framework
+    </footer>
+    
+    </body>
+    </html>
+    

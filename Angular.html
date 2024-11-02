@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Основные концепции Angular: Feature Modules, Router-Outlet, Core и Shared Module">
+  <title>Основные концепции Angular</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
+  <!-- Header -->
+  <header class="bg-blue-600 text-white py-4">
+    <div class="container mx-auto text-center">
+      <h1 class="text-3xl font-bold">Лекция: Основные концепции Angular</h1>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto py-8">
+    <!-- Введение -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-bold mb-4">Введение</h2>
+      <p class="text-lg leading-relaxed">Приветствую всех! Сегодня мы подробно рассмотрим некоторые ключевые концепции Angular, которые помогут вам создавать масштабируемые, организованные и эффективные приложения. Мы поговорим о:</p>
+      <ul class="list-disc pl-6 mt-4">
+        <li>Feature Modules (Модули функций)</li>
+        <li>Router-Outlet</li>
+        <li>Core Module</li>
+        <li>Shared Module</li>
+      </ul>
+      <p class="mt-4">Эти понятия являются фундаментальными для разработки приложений на Angular и помогут вам лучше структурировать ваш код, улучшить производительность и упростить поддержку.</p>
+    </section>
+
+    <!-- Feature Modules -->
+    <section class="mb-8">
+      <h3 class="text-xl font-bold mb-4">1. Feature Modules (Модули функций)</h3>
+      <h4 class="text-lg font-semibold mb-2">Определение</h4>
+      <p class="text-lg leading-relaxed">Feature Modules — это модули Angular, которые фокусируются на определённой функциональности или области вашего приложения. Они помогают разделить приложение на логические части, делая код более организованным и удобным для поддержки.</p>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Зачем нужны Feature Modules</h4>
+      <ul class="list-disc pl-6">
+        <li>Модульность: Разделение приложения на модули улучшает его структуру и делает его более понятным.</li>
+        <li>Ленивая загрузка (Lazy Loading): Позволяет загружать модули по требованию, что уменьшает начальное время загрузки приложения.</li>
+        <li>Командная работа: Упрощает распределение работы между разработчиками.</li>
+        <li>Повторное использование: Модули могут быть переиспользованы в других приложениях.</li>
+      </ul>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Пример использования</h4>
+      <p class="text-lg leading-relaxed">Представим, что у нас есть приложение для электронной коммерции с такими разделами:</p>
+      <ul class="list-disc pl-6 mt-2">
+        <li>Товары (Products)</li>
+        <li>Корзина (Cart)</li>
+        <li>Профиль пользователя (User Profile)</li>
+      </ul>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Шаги:</h4>
+      <pre class="bg-gray-800 text-white p-4 rounded-md mb-4">
+ng generate module products --route products --module app.module
+ng generate component products/product-list
+ng generate component products/product-detail
+      </pre>
+      <p class="text-lg leading-relaxed">Настройка маршрутизации внутри модуля:</p>
+      <pre class="bg-gray-800 text-white p-4 rounded-md mb-4">
+const routes: Routes = [
+  { path: '', component: ProductListComponent },
+  { path: ':id', component: ProductDetailComponent },
+];
+      </pre>
+      <p class="text-lg leading-relaxed">Ленивая загрузка модуля:</p>
+      <pre class="bg-gray-800 text-white p-4 rounded-md mb-4">
+const routes: Routes = [
+  { path: 'products', loadChildren: () => import('./products/products.module').then(m => m.ProductsModule) },
+];
+      </pre>
+    </section>
+
+    <!-- Router-Outlet -->
+    <section class="mb-8">
+      <h3 class="text-xl font-bold mb-4">2. Router-Outlet</h3>
+      <h4 class="text-lg font-semibold mb-2">Определение</h4>
+      <p class="text-lg leading-relaxed">router-outlet — это директива Angular, которая служит контейнером для отображения компонентов, связанных с маршрутами. Она определяет место в шаблоне, куда Angular будет загружать компоненты при навигации.</p>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Как это работает</h4>
+      <p class="text-lg leading-relaxed">Маршрутизация: Когда пользователь переходит по URL, Angular Router сопоставляет этот URL с маршрутом, который указывает, какой компонент следует загрузить.</p>
+      <p class="text-lg leading-relaxed"> Вставка компонента: Компонент, связанный с маршрутом, загружается и отображается в месте, где находится <code>&lt;router-outlet&gt;</code>.</p>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Пример использования</h4>
+      <pre class="bg-gray-800 text-white p-4 rounded-md mb-4">
+<!-- app.component.html -->
+&lt;app-header&gt;&lt;/app-header&gt;
+&lt;router-outlet&gt;&lt;/router-outlet&gt;
+&lt;app-footer&gt;&lt;/app-footer&gt;
+      </pre>
+      <p>Настройка маршрутов:</p>
+      <pre class="bg-gray-800 text-white p-4 rounded-md mb-4">
+const routes: Routes = [
+  { path: '', component: HomeComponent },
+  { path: 'products', loadChildren: () => import('./products/products.module').then(m => m.ProductsModule) },
+];
+      </pre>
+      <p class="text-lg leading-relaxed">Главный <code>&lt;router-outlet&gt;</code> в app.component.html определяет место, где будут отображаться компоненты при навигации.</p>
+      <p class="text-lg leading-relaxed">Когда пользователь переходит на <code>/products</code>, Angular загружает ProductsModule и отображает соответствующий компонент внутри <code>&lt;router-outlet&gt;</code>.</p>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Вложенные router-outlet</h4>
+      <p class="text-lg leading-relaxed">Вы можете использовать несколько <code>router-outlet</code> для создания вложенной навигации.</p>
+      <pre class="bg-gray-800 text-white p-4 rounded-md mb-4">
+<!-- products.component.html -->
+&lt;h2&gt;Products&lt;/h2&gt;
+&lt;router-outlet&gt;&lt;/router-outlet&gt;
+      </pre>
+    </section>
+
+    <!-- Core Module -->
+    <section class="mb-8">
+      <h3 class="text-xl font-bold mb-4">3. Core Module</h3>
+      <h4 class="text-lg font-semibold mb-2">Определение</h4>
+      <p class="text-lg leading-relaxed">Core Module — это модуль, который содержит сервисы и другие синглтоны, необходимые всему приложению. Он обычно импортируется только в корневой модуль приложения (AppModule) и нигде более.</p>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Зачем нужен Core Module</h4>
+      <ul class="list-disc pl-6">
+        <li>Единая точка доступа: Обеспечивает централизованное место для сервисов, которые должны быть синглтонами.</li>
+        <li>Предотвращение дублирования: Избегает случайного создания нескольких экземпляров сервисов.</li>
+        <li>Организация кода: Улучшает структуру приложения, разделяя глобальные сервисы от функциональных модулей.</li>
+      </ul>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Что включать в Core Module</h4>
+      <ul class="list-disc pl-6">
+        <li>Сервисы для аутентификации и авторизации</li>
+        <li>Сервисы логирования</li>
+        <li>Глобальные конфигурации</li>
+        <li>Глобальные Guards и Interceptors</li>
+      </ul>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Пример создания Core Module</h4>
+      <pre class="bg-gray-800 text-white p-4 rounded-md mb-4">
+ng generate module core
+      </pre>
+      <p class="text-lg leading-relaxed">Пример сервиса аутентификации:</p>
+      <pre class="bg-gray-800 text-white p-4 rounded-md mb-4">
+@Injectable({
+  providedIn: 'root',
+})
+export class AuthService {
+  // логика аутентификации
+}
+      </pre>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Импорт модуля:</h4>
+      <pre class="bg-gray-800 text-white p-4 rounded-md mb-4">
+import { CoreModule } from './core/core.module';
+
+@NgModule({
+  imports: [CoreModule],
+})
+export class AppModule {}
+      </pre>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Предотвращение повторного импорта:</h4>
+      <pre class="bg-gray-800 text-white p-4 rounded-md mb-4">
+@NgModule({})
+export class CoreModule {
+  constructor(@Optional() @SkipSelf() parentModule: CoreModule) {
+    if (parentModule) {
+      throw new Error('CoreModule уже был загружен. Импортируйте его только в AppModule.');
+    }
+  }
+}
+      </pre>
+    </section>
+
+    <!-- Shared Module -->
+    <section class="mb-8">
+      <h3 class="text-xl font-bold mb-4">4. Shared Module</h3>
+      <h4 class="text-lg font-semibold mb-2">Определение</h4>
+      <p class="text-lg leading-relaxed">Shared Module — это модуль, который содержит общие компоненты, директивы и пайпы, используемые в разных частях приложения.</p>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Зачем нужен Shared Module</h4>
+      <ul class="list-disc pl-6">
+        <li>Повторное использование: Позволяет переиспользовать общие элементы без дублирования кода.</li>
+        <li>Удобство импорта: Можно импортировать один модуль вместо нескольких отдельных компонентов или директив.</li>
+        <li>Организация кода: Помогает поддерживать чистую и понятную структуру проекта.</li>
+      </ul>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Что включать в Shared Module</h4>
+      <ul class="list-disc pl-6">
+        <li>Общие компоненты: Например, кнопки, модальные окна, элементы формы.</li>
+        <li>Пайпы: Общие преобразователи данных.</li>
+        <li>Директивы: Общие поведения для элементов.</li>
+      </ul>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Пример создания Shared Module</h4>
+      <pre class="bg-gray-800 text-white p-4 rounded-md mb-4">
+ng generate module shared
+ng generate component shared/button
+ng generate component shared/modal
+      </pre>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Конфигурация модуля:</h4>
+      <pre class="bg-gray-800 text-white p-4 rounded-md mb-4">
+@NgModule({
+  declarations: [ButtonComponent, ModalComponent],
+  imports: [CommonModule],
+  exports: [ButtonComponent, ModalComponent, CommonModule],
+})
+export class SharedModule {}
+      </pre>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Использование в других модулях:</h4>
+      <pre class="bg-gray-800 text-white p-4 rounded-md mb-4">
+import { SharedModule } from '../shared/shared.module';
+
+@NgModule({
+  imports: [SharedModule],
+})
+export class ProductsModule {}
+      </pre>
+    </section>
+
+    <!-- Заключение -->
+    <section class="mb-8">
+      <h3 class="text-xl font-bold mb-4">Заключение</h3>
+      <p class="text-lg leading-relaxed">Мы рассмотрели четыре ключевые концепции Angular, которые помогают создавать масштабируемые и организованные приложения:</p>
+      <ul class="list-disc pl-6">
+        <li>Feature Modules позволяют разбивать приложение на логические части, улучшая его структуру и производительность.</li>
+        <li>router-outlet служит точкой вставки компонентов при навигации и является основой маршрутизации в Angular.</li>
+        <li>Core Module используется для размещения глобальных сервисов и синглтонов, необходимых всему приложению.</li>
+        <li>Shared Module содержит общие компоненты, директивы и пайпы, которые могут быть переиспользованы в разных модулях.</li>
+      </ul>
+      <p class="text-lg leading-relaxed">Используя эти концепции, вы сможете создавать приложения, которые легко поддерживать и масштабировать. Помните, что хорошая структура проекта и организация кода — ключ к успешной разработке.</p>
+
+      <h4 class="text-lg font-semibold mt-4 mb-2">Дополнительные рекомендации:</h4>
+      <ul class="list-disc pl-6">
+        <li>Следуйте принципам SOLID: Это поможет писать более чистый и поддерживаемый код.</li>
+        <li>Изучайте новые возможности Angular: Фреймворк постоянно развивается, и знание новых инструментов поможет вам писать более эффективный код.</li>
+        <li>Практикуйтесь: Лучший способ понять эти концепции — применять их на практике.</li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-4">
+    <div class="container mx-auto text-center">
+      <p>&copy; 2024 Angular Concepts. Все права защищены.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

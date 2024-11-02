@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анализ бенчмарков для MatrixMaxFinder</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', sans-serif;
+            line-height: 1.8;
+            background-color: #f7f7f7;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        h1, h2 {
+            color: #444;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        table, th, td {
+            border: 1px solid #e2e2e2;
+        }
+        th {
+            padding: 12px;
+            background-color: #f1f1f1;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+        td {
+            padding: 12px;
+            background-color: #fff;
+        }
+        td, th {
+            text-align: left;
+        }
+        table tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        ul li {
+            background: #e6f7ff;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+        ul li:hover {
+            transform: translateY(-2px);
+        }
+        pre {
+            background-color: #2e2e2e;
+            color: #f0f0f0;
+            padding: 15px;
+            overflow-x: auto;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        #chartContainer {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Анализ бенчмарков для MatrixMaxFinder</h1>
+
+    <h2>Общие результаты</h2>
+    <p><strong>Общее время выполнения:</strong> 08:09:16 (29356.96 секунд)</p>
+    <p><strong>Количество бенчмарков:</strong> 3</p>
+
+    <h2>Детализированный анализ</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Метод</th>
+                <th>Среднее время (мс)</th>
+                <th>Время (часы)</th>
+                <th>Память (КБ)</th>
+                <th>Память (МБ)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>FindMaxSync</td>
+                <td>1,537,021.4</td>
+                <td>0.43</td>
+                <td>0.39</td>
+                <td>0.0004</td>
+            </tr>
+            <tr>
+                <td>FindMaxParallelForEach</td>
+                <td>229,438.7</td>
+                <td>0.06</td>
+                <td>514.43</td>
+                <td>0.514</td>
+            </tr>
+            <tr>
+                <td>FindMaxAsync</td>
+                <td>1,497,567.9</td>
+                <td>0.42</td>
+                <td>16,385.83</td>
+                <td>16.39</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Заключения</h2>
+    <p>Метод <strong>FindMaxParallelForEach</strong> оказался самым быстрым. Он выполнился в 6,7 раз быстрее, чем остальные методы. Кроме того, он использует не слишком много памяти, что делает его хорошим вариантом для работы с большими данными в параллельном режиме.</p>
+    <p>Метод <strong>FindMaxAsync</strong> работает быстрее, чем FindMaxSync, но при этом использует намного больше памяти и требует частой сборки мусора. Это может замедлить систему, особенно если данных очень много.</p>
+    <p>Метод <strong>FindMaxSync</strong> был самым медленным, но при этом потреблял меньше всего памяти. Его можно использовать в случаях, когда параллельная обработка и асинхронность не нужны.</p>
+
+    <h2>Сравнение использования памяти</h2>
+    <div id="chartContainer">
+        <canvas id="memoryChart"></canvas>
+    </div>
+
+    <h2>Технические характеристики машины</h2>
+    <ul>
+        <li><strong>Операционная система:</strong> Windows 10 (10.0.19045.4894/22H2/2022Update)</li>
+        <li><strong>Процессор:</strong> AMD Ryzen 5 3600X (1 CPU, 12 логических и 6 физических ядер)</li>
+        <li><strong>Среда выполнения:</strong> .NET 8.0.8 (8.0.824.36612)</li>
+        <li><strong>GC (Сборка мусора):</strong> Concurrent Workstation</li>
+        <li><strong>Поддержка аппаратных ускорителей:</strong> AVX2, AES, BMI1, BMI2, FMA и другие</li>
+    </ul>
+    <h2>Подробная информация с консоли</h2>
+    <pre>
+// Validating benchmarks:
+// ***** BenchmarkRunner: Start   *****
+// ***** Found 3 benchmark(s) in total *****
+// ***** Building 1 exe(s) in Parallel: Start   *****
+// start dotnet  restore /p:UseSharedCompilation=false /p:BuildInParallel=false /m:1 /p:Deterministic=true /p:Optimize=true /p:IntermediateOutputPath="C:\Users\Administrator\source\repos\Matrix\bin\Release\net8.0\63f41aea-01b5-491c-ac15-8480535012f5\obj\Release\net8.0/" /p:OutDir="C:\Users\Administrator\source\repos\Matrix\bin\Release\net8.0\63f41aea-01b5-491c-ac15-8480535012f5\bin\Release\net8.0/" /p:OutputPath="C:\Users\Administrator\source\repos\Matrix\bin\Release\net8.0\63f41aea-01b5-491c-ac15-8480535012f5\bin\Release\net8.0/" in C:\Users\Administrator\source\repos\Matrix\bin\Release\net8.0\63f41aea-01b5-491c-ac15-8480535012f5
+// command took 2.19 sec and exited with 0
+// start dotnet  build -c Release --no-restore /p:UseSharedCompilation=false /p:BuildInParallel=false /m:1 /p:Deterministic=true /p:Optimize=true /p:IntermediateOutputPath="C:\Users\Administrator\source\repos\Matrix\bin\Release\net8.0\63f41aea-01b5-491c-ac15-8480535012f5\obj\Release\net8.0/" /p:OutDir="C:\Users\Administrator\source\repos\Matrix\bin\Release\net8.0\63f41aea-01b5-491c-ac15-8480535012f5\bin\Release\net8.0/" /p:OutputPath="C:\Users\Administrator\source\repos\Matrix\bin\Release\net8.0\63f41aea-01b5-491c-ac15-8480535012f5\bin\Release\net8.0/" --output "C:\Users\Administrator\source\repos\Matrix\bin\Release\net8.0\63f41aea-01b5-491c-ac15-8480535012f5\bin\Release\net8.0/" in C:\Users\Administrator\source\repos\Matrix\bin\Release\net8.0\63f41aea-01b5-491c-ac15-8480535012f5
+// command took 4.27 sec and exited with 0
+// ***** Done, took 00:00:06 (6.53 sec)   *****
+// Found 3 benchmarks:
+//   MatrixMaxFinder.FindMaxSync: Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)
+//   MatrixMaxFinder.FindMaxParallelForEach: Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)
+//   MatrixMaxFinder.FindMaxAsync: Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)
+
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: Высокая производительность)
+// **************************
+// Benchmark: MatrixMaxFinder.FindMaxSync: Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 63f41aea-01b5-491c-ac15-8480535012f5.dll --anonymousPipes 1504 1336 --benchmarkName Matrix.MatrixMaxFinder.FindMaxSync --job Dry --benchmarkId 0 in C:\Users\Administrator\source\repos\Matrix\bin\Release\net8.0\63f41aea-01b5-491c-ac15-8480535012f5\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.8 (8.0.824.36612), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)
+
+// BeforeActualRun
+WorkloadActual   1: 1 op, 1537021357300.00 ns, 25.6170 m/op
+
+// AfterActualRun
+WorkloadResult   1: 1 op, 1537021357300.00 ns, 25.6170 m/op
+// GC:  0 0 0 400 1
+// Threading:  0 0 1
+
+// AfterAll
+// Benchmark Process 16120 has exited with code 0.
+
+Mean = 25.617 m, StdErr = 0.000 m (0.00%), N = 1, StdDev = 0.000 m
+Min = 25.617 m, Q1 = 25.617 m, Median = 25.617 m, Q3 = 25.617 m, Max = 25.617 m
+IQR = 0.000 m, LowerFence = 25.617 m, UpperFence = 25.617 m
+ConfidenceInterval = [NaN m; NaN m] (CI 99.9%), Margin = NaN m (NaN% of Mean)
+Skewness = NaN, Kurtosis = NaN, MValue = 2
+-------------------- Histogram --------------------
+[25.617 m ; 25.617 m) | @
+---------------------------------------------------
+
+MatrixMaxFinder.FindMaxParallelForEach: Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)
+Runtime = .NET 8.0.8 (8.0.824.36612), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 3.824 m, StdErr = 0.000 m (0.00%), N = 1, StdDev = 0.000 m
+Min = 3.824 m, Q1 = 3.824 m, Median = 3.824 m, Q3 = 3.824 m, Max = 3.824 m
+IQR = 0.000 m, LowerFence = 3.824 m, UpperFence = 3.824 m
+ConfidenceInterval = [NaN m; NaN m] (CI 99.9%), Margin = NaN m (NaN% of Mean)
+Skewness = NaN, Kurtosis = NaN, MValue = 2
+-------------------- Histogram --------------------
+[3.824 m ; 3.824 m) | @
+---------------------------------------------------
+
+MatrixMaxFinder.FindMaxAsync: Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)
+Runtime = .NET 8.0.8 (8.0.824.36612), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 24.959 m, StdErr = 0.000 m (0.00%), N = 1, StdDev = 0.000 m
+Min = 24.959 m, Q1 = 24.959 m, Median = 24.959 m, Q3 = 24.959 m, Max = 24.959 m
+IQR = 0.000 m, LowerFence = 24.959 m, UpperFence = 24.959 m
+ConfidenceInterval = [NaN m; NaN m] (CI 99.9%), Margin = NaN m (NaN% of Mean)
+Skewness = NaN, Kurtosis = NaN, MValue = 2
+-------------------- Histogram --------------------
+[24.959 m ; 24.959 m) | @
+---------------------------------------------------</pre>
+
+    <h2>С# Проект</h2>
+    <pre>
+        using BenchmarkDotNet.Attributes;
+        using BenchmarkDotNet.Configs;
+        using BenchmarkDotNet.Reports;
+        using BenchmarkDotNet.Running;
+        using Perfolizer.Metrology;
+        
+        namespace Matrix
+        {
+            [MemoryDiagnoser]
+            [DryJob]
+            public class MatrixMaxFinder
+            {
+                private const int MatrixSize = 1000000;
+        
+                private int RandomNumber(int i, int j)
+                {
+                    unchecked
+                    {
+                        int seed = i * 31 + j; // Простая хеш-функция
+                        seed = (seed ^ 0x5f3759df) * 0x6a09e667;
+                        return (Math.Abs(seed) % 1000000) + 1;
+                    }
+                }
+        
+                [Benchmark]
+                public int FindMaxSync()
+                {
+                    int max = int.MinValue;
+                    for (int i = 0; i < MatrixSize; i++)
+                    {
+                        for (int j = 0; j < MatrixSize; j++)
+                        {
+                            int value = RandomNumber(i, j);
+                            if (value > max)
+                            {
+                                max = value;
+                            }
+                        }
+                    }
+                    return max;
+                }
+        
+                [Benchmark]
+                public int FindMaxParallelForEach()
+                {
+                    int max = int.MinValue;
+                    object lockObj = new object();
+                    Parallel.ForEach(Enumerable.Range(0, MatrixSize), i =>
+                    {
+                        int localMax = int.MinValue;
+                        for (int j = 0; j < MatrixSize; j++)
+                        {
+                            int value = RandomNumber(i, j);
+                            if (value > localMax)
+                            {
+                                localMax = value;
+                            }
+                        }
+                        lock (lockObj)
+                        {
+                            if (localMax > max)
+                            {
+                                max = localMax;
+                            }
+                        }
+                    });
+                    return max;
+                }
+        
+                [Benchmark]
+                public async Task<int> FindMaxAsync()
+                {
+                    int max = int.MinValue;
+                    object lockObj = new object();
+                    var tasks = Enumerable.Range(0, MatrixSize).Select(async i =>
+                    {
+                        int localMax = int.MinValue;
+                        for (int j = 0; j < MatrixSize; j++)
+                        {
+                            int value = RandomNumber(i, j);
+                            if (value > localMax)
+                            {
+                                localMax = value;
+                            }
+                        }
+                        lock (lockObj)
+                        {
+                            if (localMax > max)
+                            {
+                                max = localMax;
+                            }
+                        }
+                    });
+                    await Task.WhenAll(tasks);
+                    return max;
+                }
+            }
+        
+            public class Program
+            {
+                public static void Main(string[] args)
+                {
+                    var config = DefaultConfig.Instance
+                      .WithSummaryStyle(SummaryStyle.Default
+                          .WithTimeUnit(Perfolizer.Horology.TimeUnit.Millisecond)
+                          .WithSizeUnit(SizeUnit.KB))
+                      ;
+        
+                    var summary = BenchmarkRunner.Run<MatrixMaxFinder>(config);
+                }
+            }
+        </pre>
+
+        <h2>Объяснение метода <code>RandomNumber(int i, int j)</code></h2>
+
+<p>
+    Метод <code>RandomNumber(int i, int j)</code> предназначен для генерации псевдослучайного числа на основе входных параметров <code>i</code> и <code>j</code>.
+    Давайте разберемся по шагам, что происходит в этом методе.
+</p>
+
+<h2>Основная структура метода:</h2>
+<pre>
+    private int RandomNumber(int i, int j)
+    {
+        unchecked
+        {
+            int seed = i * 31 + j; // Простая хеш-функция
+            seed = (seed ^ 0x5f3759df) * 0x6a09e667;
+            return (Math.Abs(seed) % 1000000) + 1;
+        }
+    }
+</pre>
+
+<h2>Подробное объяснение:</h2>
+
+<p>
+    <strong>Хеширование значений <code>i</code> и <code>j</code>:</strong> <br>
+    <code>int seed = i * 31 + j;</code> — простая хеш-функция, которая используется для создания уникального числа <code>seed</code> на основе входных параметров <code>i</code> и <code>j</code>.
+    Умножение на <code>31</code> — это стандартная практика в хешировании для увеличения уникальности комбинаций значений <code>i</code> и <code>j</code>.
+    Это помогает минимизировать коллизии, когда два разных набора значений могут давать одинаковый результат.
+</p>
+
+<p>
+    <strong>Побитовые операции для перемешивания хеша:</strong> <br>
+    <code>seed = (seed ^ 0x5f3759df) * 0x6a09e667;</code> — здесь происходит побитовая операция XOR (исключающее ИЛИ, <code>^</code>) между <code>seed</code> и магическим числом <code>0x5f3759df</code>.
+    После этого результат умножается на другое магическое число <code>0x6a09e667</code>. Эти магические числа используются для перемешивания значений, чтобы сделать их менее предсказуемыми.
+</p>
+
+<ul>
+    <li><code>0x5f3759df</code> — одно из магических чисел, используемое в быстром алгоритме вычисления обратного квадратного корня. Здесь оно применяется для аналогичной цели — создания уникальных чисел.</li>
+    <li><code>0x6a09e667</code> — магическое число, часто используемое в криптографических хеш-функциях, таких как SHA-256. Оно усиливает "случайность" результата.</li>
+</ul>
+
+<p>
+    <strong>Возвращение псевдослучайного числа:</strong> <br>
+    <code>return (Math.Abs(seed) % 1000000) + 1;</code> — этот шаг возвращает псевдослучайное число.
+    Мы берем абсолютное значение <code>seed</code>, чтобы убрать отрицательные значения, затем выполняем взятие остатка от деления на <code>1,000,000</code>, чтобы ограничить результат числом от <code>0</code> до <code>999,999</code>. Наконец, прибавляется <code>1</code>, чтобы результат находился в диапазоне от <code>1</code> до <code>1,000,000</code>.
+</p>
+
+<p>
+    <strong>Роль <code>unchecked</code>:</strong> <br>
+    Ключевое слово <code>unchecked</code> отключает проверку на переполнение при выполнении арифметических операций. Если значения выйдут за пределы диапазона <code>int</code> (например, больше <code>2^31-1</code> или меньше <code>-2^31</code>), они будут просто "закручены" вокруг максимальных значений, не вызывая ошибки. Это оптимизация, часто используемая для повышения производительности, где переполнение не критично.
+</p>
+
+<p>
+    <strong>Основная идея метода:</strong> <br>
+    Метод <code>RandomNumber</code> генерирует псевдослучайное число на основе двух входных параметров. Он использует комбинацию простого хеширования (<code>i * 31 + j</code>), побитовых операций и магических чисел для создания чисел, которые ведут себя как случайные, хотя и детерминированы (всегда дают один и тот же результат для одних и тех же входных параметров).
+</p>
+
+
+
+
+
+<script>
+    const ctx = document.getElementById('memoryChart').getContext('2d');
+    const memoryChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['FindMaxSync', 'FindMaxParallelForEach', 'FindMaxAsync'],
+            datasets: [{
+                label: 'Память (МБ)',
+                data: [0.0004, 0.514, 16.39],
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 99, 132, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Память (МБ)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                title: {
+                    display: true,
+                    text: 'Использование памяти методами (в МБ)'
+                }
+            }
+        }
+    });
+</script>
