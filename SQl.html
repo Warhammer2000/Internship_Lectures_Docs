@@ -7,6 +7,50 @@
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+         
+        /* Стили для подсказок */
+        .tooltip {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            color: #1D4ED8;
+            text-decoration: underline;
+        }
+        .tooltip .tooltip-icon {
+            width: 16px;
+            height: 16px;
+            background-color: #1D4ED8;
+            color: #fff;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+        .tooltip .tooltip-content {
+            visibility: hidden;
+            width: 250px;
+            background-color: #111827;
+            color: #fff;
+            text-align: left;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            bottom: 125%; /* Показываем над текстом */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+        .tooltip:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+    
         h1 {
             color: #ffffff;
             font-size: 2.25rem;
@@ -70,641 +114,734 @@
     <div class="container mx-auto px-4 py-16 mt-16">
         <h1 class="text-3xl font-semibold text-black-600 dark:text-black-400 mb-6">SQL</h1>
 
-        <section id="optimization" class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Оптимизация SQL-запросов и индексация</h2>
-            <p class="text-lg leading-relaxed mb-4">
-                Индексы играют ключевую роль в повышении производительности SQL-запросов, позволяя ускорить доступ к данным.
-            </p>
-            <img src="https://s33046.pcdn.co/wp-content/uploads/2018/06/c-users-epollack-appdata-local-microsoft-windows-1-12.jpeg" 
-            alt="SQL Optimization Graphs" 
-            class="w-1/2 h-auto rounded-lg shadow-lg mb-6">
-       
-            <h3 class="text-2xl font-semibold mt-6">Index Seek и Index Scan</h3>
-            <p class="text-lg leading-relaxed mb-4">
-                <strong>Index Seek</strong> используется для быстрого поиска данных, используя ключевые индексы, в то время как <strong>Index Scan</strong> выполняет полное сканирование индекса.
-            </p>
-            <h3 class="text-2xl font-semibold mt-6">Key Lookup</h3>
-            <p class="text-lg leading-relaxed mb-4">
-                <strong>Key Lookup</strong> выполняется, когда данные не могут быть найдены только по индексу. Это может замедлить выполнение запроса, особенно если записи многократно повторяются.
-            </p>
-            <h3 class="text-2xl font-semibold mt-6">Логический поиск и плотность данных</h3>
-            <p class="text-lg leading-relaxed mb-4">
-                Логический поиск по индексу эффективен при плотности данных до 30%. Использование статистики запросов и параметра <strong>Estimate Cost</strong> позволяет оценить стоимость запроса.
-            </p>
-            <h3 class="text-2xl font-semibold mt-6">Предотвращение SQL-инъекций</h3>
-            <p class="text-lg leading-relaxed mb-4">
-                SQL-инъекции представляют серьёзную угрозу. Использование параметризованных запросов и надёжных методов фильтрации предотвращает инъекции.
-            </p>
-        </section>
-        
+       <!-- Section: Оптимизация SQL-запросов и индексация -->
+<section id="optimization" class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Оптимизация SQL-запросов и индексация</h2>
+    <p class="text-lg leading-relaxed mb-4">
+        <span class="tooltip">Индексы<span class="tooltip-icon">?</span><span class="tooltip-content">Индексы позволяют оптимизировать доступ к данным в базе, ускоряя запросы за счёт создания организованных структур для хранения.</span></span> играют ключевую роль в повышении производительности SQL-запросов, позволяя ускорить доступ к данным.
+    </p>
+    <img src="https://s33046.pcdn.co/wp-content/uploads/2018/06/c-users-epollack-appdata-local-microsoft-windows-1-12.jpeg" alt="SQL Optimization Graphs" class="w-1/2 h-auto rounded-lg shadow-lg mb-6">
+   
+    <h3 class="text-2xl font-semibold mt-6">Index Seek и Index Scan</h3>
+    <p class="text-lg leading-relaxed mb-4">
+        <span class="tooltip">Index Seek<span class="tooltip-icon">?</span><span class="tooltip-content">Index Seek выполняет выборку, используя конкретные индексы для поиска, что более эффективно, чем полный проход.</span></span> используется для быстрого поиска данных, используя ключевые индексы, в то время как <span class="tooltip">Index Scan<span class="tooltip-icon">?</span><span class="tooltip-content">Index Scan проходит по всему индексу, что может снижать производительность при больших объемах данных.</span></span>.
+    </p>
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">1. Язык структурированных запросов (SQL)</h2>
-            <p class="text-lg leading-relaxed">Обзор команд SQL для создания баз данных, работы с таблицами и обработки данных.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-                -- Создать новую базу данных
-                CREATE DATABASE sample2;
-                
-                -- Использовать базу данных
-                USE sample2;
-                
-                -- Создать таблицу customer
-                CREATE TABLE customer (
-                    customerid INT IDENTITY(1,1) PRIMARY KEY,
-                    customernumber INT NOT NULL UNIQUE CHECK (customernumber > 0),
-                    lastname VARCHAR(30) NOT NULL,
-                    firstname VARCHAR(30) NOT NULL,
-                    areacode INT DEFAULT 71000,
-                    address VARCHAR(50),
-                    country VARCHAR(50) DEFAULT 'Malaysia'
-                );
-            </code></pre>
-        </section>
+    <h3 class="text-2xl font-semibold mt-6">Key Lookup</h3>
+    <p class="text-lg leading-relaxed mb-4">
+        <strong>Key Lookup</strong> выполняется, когда данные не могут быть найдены только по индексу. Это может замедлить выполнение запроса, особенно если записи многократно повторяются.
+    </p>
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">2. Вставка и отображение данных</h2>
-            <p class="text-lg leading-relaxed">Добавление записей, извлечение данных и просмотр конкретных столбцов или условий.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-                -- Вставить значения в таблицу customer
-                INSERT INTO customer VALUES
-                    (100, 'Fang Ying', 'Sham', '418999', 'Address Example', DEFAULT),
-                    (200, 'Mei Mei', 'Tan', DEFAULT, 'Another Address', 'Thailand'),
-                    (300, 'Albert', 'John', DEFAULT, 'Some Address', DEFAULT);
-                
-                -- Показать все записи из таблицы customer
-                SELECT * FROM customer;
-                
-                -- Показать конкретные столбцы
-                SELECT customerid, customernumber, lastname, firstname FROM customer;
-            </code></pre>
-        </section>
+    <h3 class="text-2xl font-semibold mt-6">Предотвращение SQL-инъекций</h3>
+    <p class="text-lg leading-relaxed mb-4">
+        <span class="tooltip">SQL-инъекции<span class="tooltip-icon">?</span><span class="tooltip-content">SQL-инъекции возникают при введении вредоносного кода в SQL-запросы, что может привести к утечке данных.</span></span> представляют серьёзную угрозу. Использование параметризованных запросов и надёжных методов фильтрации предотвращает инъекции.
+    </p>
+</section>
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6"> 3. Изменение структуры таблицы</h2>
-            <p class="text-lg leading-relaxed">Изменение структуры таблицы путем добавления, обновления или удаления столбцов.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-                -- Добавить новый столбец в таблицу customer
-                ALTER TABLE customer
-                ADD phonenumber VARCHAR(20);
-                
-                -- Обновить данные в новом столбце
-                UPDATE customer SET phonenumber = '1234545346' WHERE customerid = 1;
-                UPDATE customer SET phonenumber = '45554654' WHERE customerid = 2;
-                
-                -- Удалить столбец phonenumber из таблицы
-                ALTER TABLE customer
-                DROP COLUMN phonenumber;
-            </code></pre>
-        </section>
+<!-- Section: Язык структурированных запросов (SQL) -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">1. Язык структурированных запросов (SQL)</h2>
+    <p class="text-lg leading-relaxed">
+        Обзор команд SQL для создания баз данных, работы с таблицами и обработки данных.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Создать новую базу данных
+CREATE DATABASE sample2;
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">4. Удаление записей и таблиц</h2>
-            <p class="text-lg leading-relaxed">Команды для удаления конкретных записей или целых таблиц из базы данных.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-                -- Удалить конкретную запись из таблицы customer
-                DELETE FROM customer
-                WHERE country = 'Thailand';
-                
-                -- Удалить всю таблицу customer
-                DROP TABLE customer;
-            </code></pre>
-        </section>
+-- Использовать базу данных
+USE sample2;
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">5. Изменение типов данных</h2>
-            <p class="description">Изменение типов данных столбцов и использование временных преобразований типов данных.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-                -- Изменить тип данных существующего столбца
-                ALTER TABLE customer
-                ALTER COLUMN phonenumber VARCHAR(10);
-                
-                -- Примеры CAST и CONVERT для временного изменения типа данных
-                SELECT CAST('2017-08-25 00:00:00.000' AS DATE);
-                SELECT CONVERT(DATE, '2017-08-25 00:00:00.000');
-            </code></pre>
-        </section>
+-- Создать таблицу customer
+CREATE TABLE customer (
+    customerid INT IDENTITY(1,1) PRIMARY KEY,
+    customernumber INT NOT NULL UNIQUE CHECK (customernumber > 0),
+    lastname VARCHAR(30) NOT NULL,
+    firstname VARCHAR(30) NOT NULL,
+    areacode INT DEFAULT 71000,
+    address VARCHAR(50),
+    country VARCHAR(50) DEFAULT 'Malaysia'
+);
+    </code></pre>
+</section>
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">6. Извлечение и фильтрация данных</h2>
-            <p class="text-lg leading-relaxed">Использование фильтров и сортировки для извлечения определенных наборов данных.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-                -- Показать первые две записи из таблицы customer
-                SELECT TOP 2 * FROM customer;
-                
-                -- Извлечение конкретных столбцов с сортировкой
-                SELECT customerfirstname, customerlastname
-                FROM customer
-                ORDER BY customerlastname DESC;
-                
-                -- Использование LIKE для поиска по шаблону
-                SELECT * FROM customer
-                WHERE customerlastname LIKE '_r%';
-                
-                -- Использование IN для фильтрации по нескольким значениям
-                SELECT * FROM customer
-                WHERE customerlastname IN ('Brown', 'Michael', 'Jim');
-            </code></pre>
-        </section>
+<!-- Section: Вставка и отображение данных -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">2. Вставка и отображение данных</h2>
+    <p class="text-lg leading-relaxed">
+        Добавление записей, извлечение данных и просмотр конкретных столбцов или условий.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Вставить значения в таблицу customer
+INSERT INTO customer VALUES
+    (100, 'Fang Ying', 'Sham', '418999', 'Address Example', DEFAULT),
+    (200, 'Mei Mei', 'Tan', DEFAULT, 'Another Address', 'Thailand'),
+    (300, 'Albert', 'John', DEFAULT, 'Some Address', DEFAULT);
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">7. Агрегатные функции</h2>
-            <p class="text-lg leading-relaxed">Использование агрегатных функций, таких как COUNT, SUM и AVG для суммарной обработки данных.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-                -- Подсчет записей, соответствующих определенному условию
-                SELECT COUNT(*) AS [Number of Records]
-                FROM customer
-                WHERE customerfirstname LIKE 'B%';
-                
-                -- Суммирование значений в определенных столбцах
-                SELECT sale.employeeid, EmployeeFirstName, EmployeeLastName, 
-                       COUNT(*) AS [Number of Orders],
-                       SUM(salequantity) AS [Total Quantity]
-                FROM sale
-                JOIN employee ON sale.employeeid = employee.employeeid
-                GROUP BY sale.employeeid, EmployeeFirstName, EmployeeLastName;
-            </code></pre>
-        </section>
+-- Показать все записи из таблицы customer
+SELECT * FROM customer;
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">8. Функции работы с датами и временем</h2>
-            <p class="text-lg leading-relaxed">Использование SQL-функций для работы с датами и временем.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-                -- Подсчет записей по месяцам с суммированием сумм
-                SELECT MONTH(saledate) AS [Month],
-                       COUNT(*) AS [Number of Sales],
-                       SUM(salequantity * saleunitprice) AS [Total Amount]
-                FROM sale
-                GROUP BY MONTH(saledate);
-                
-                -- Поиск максимальных и минимальных значений
-                SELECT MAX(Salary) FROM EmployeeSalary;
-                SELECT MIN(Salary) FROM EmployeeSalary;
-                
-                -- Вычисление средних значений
-                SELECT AVG(Salary) FROM EmployeeSalary;
-            </code></pre>
-        </section>
+-- Показать конкретные столбцы
+SELECT customerid, customernumber, lastname, firstname FROM customer;
+    </code></pre>
+</section>
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">9. Группировка и фильтрация групп с помощью HAVING</h2>
-            <p class="text-lg leading-relaxed">Использование GROUP BY и HAVING для группировки данных и фильтрации агрегированных результатов.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-                -- Подсчет должностей с количеством больше одного
-                SELECT JobTitle, COUNT(JobTitle) AS [Job Count]
-                FROM EmployeeDemographics ED
-                JOIN EmployeeSalary ES ON ED.EmployeeID = ES.EmployeeID
-                GROUP BY JobTitle
-                HAVING COUNT(JobTitle) > 1;
-                
-                -- Фильтрация средней зарплаты для должностей с определенным значением
-                SELECT JobTitle, AVG(Salary) AS [Average Salary]
-                FROM EmployeeDemographics ED
-                JOIN EmployeeSalary ES ON ED.EmployeeID = ES.EmployeeID
-                GROUP BY JobTitle
-                HAVING AVG(Salary) > 45000
-                ORDER BY [Average Salary];
-            </code></pre>
-        </section>
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">10. Временное преобразование типов данных</h2>
-            <p class="text-lg leading-relaxed">Использование временного преобразования типов данных с помощью функций CAST и CONVERT.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-                -- Использование CAST для преобразования типа данных
-                SELECT CAST('2017-08-25 00:00:00.000' AS DATE);
-                
-                -- Использование CONVERT со стилем для преобразования типа данных
-                SELECT CONVERT(DATE, '2017-08-25 00:00:00.000');
-            </code></pre>
-        </section>
+        <!-- Section: Изменение структуры таблицы -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">3. Изменение структуры таблицы</h2>
+    <p class="text-lg leading-relaxed">
+        Изменение структуры таблицы путем добавления, обновления или удаления столбцов.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Добавить новый столбец в таблицу customer
+ALTER TABLE customer
+ADD phonenumber VARCHAR(20);
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">11. Условная логика с CASE</h2>
-            <p class="text-lg leading-relaxed">Использование оператора CASE для условных выражений в SQL-запросах.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-                -- Использование CASE для классификации данных по условиям
-                SELECT FirstName, LastName, Age,
-                       CASE
-                           WHEN Age > 30 THEN 'Old'
-                           WHEN Age BETWEEN 27 AND 30 THEN 'Young'
-                           ELSE 'Baby'
-                       END AS AgeCategory
-                FROM EmployeeDemographics
-                WHERE Age IS NOT NULL
-                ORDER BY Age;
-                
-                -- Применение CASE с арифметическими операциями
-                SELECT FirstName, LastName, JobTitle, Salary,
-                       CASE
-                           WHEN JobTitle = 'Salesman' THEN Salary + (Salary * 0.10)
-                           WHEN JobTitle = 'Accountant' THEN Salary + (Salary * 0.05)
-                           WHEN JobTitle = 'HR' THEN Salary + (Salary * 0.000001)
-                           ELSE Salary + (Salary * 0.03)
-                       END AS SalaryAfterRaise
-                FROM EmployeeDemographics ED
-                JOIN EmployeeSalary ES ON ED.EmployeeID = ES.EmployeeID;
-            </code></pre>
-        </section>
+-- Обновить данные в новом столбце
+UPDATE customer SET phonenumber = '1234545346' WHERE customerid = 1;
+UPDATE customer SET phonenumber = '45554654' WHERE customerid = 2;
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">12. Разделение данных</h2>
-            <p class="text-lg leading-relaxed">Разделение данных для нумерации строк, ранжирования или других вычислений в определенных группах.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-                -- Использование PARTITION BY для подсчета пола в подмножестве
-                SELECT FirstName, LastName, Gender, Salary,
-                       COUNT(Gender) OVER (PARTITION BY Gender) AS TotalGender
-                FROM EmployeeDemographics ED
-                JOIN EmployeeSalary ES ON ED.EmployeeID = ES.EmployeeID;
-                
-                -- Пример с ROW_NUMBER() для присвоения уникальных рангов внутри каждой группы
-                SELECT *, ROW_NUMBER() OVER(PARTITION BY JobTitle ORDER BY Salary DESC) AS SalaryRank
-                FROM EmployeeSalary
-                ORDER BY JobTitle, SalaryRank;
-            </code></pre>
-        </section>
+-- Удалить столбец phonenumber из таблицы
+ALTER TABLE customer
+DROP COLUMN phonenumber;
+    </code></pre>
+</section>
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">13. Подзапросы</h2>
-            <p class="text-lg leading-relaxed">Использование подзапросов в SELECT, WHERE и FROM для извлечения или фильтрации данных.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-                -- Подзапрос в SELECT для расчета средней зарплаты
-                SELECT EmployeeID, Salary,
-                       (SELECT AVG(Salary) FROM EmployeeSalary) AS AllAvgSalary
-                FROM EmployeeSalary;
-                
-                -- Подзапрос в WHERE для фильтрации по конкретным критериям
-                SELECT EmployeeID, JobTitle, Salary
-                FROM EmployeeSalary
-                WHERE Salary IN (SELECT MAX(Salary) FROM EmployeeSalary);
-            </code></pre>
-        </section>
+<!-- Section: Удаление записей и таблиц -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">4. Удаление записей и таблиц</h2>
+    <p class="text-lg leading-relaxed">
+        Команды для удаления конкретных записей или целых таблиц из базы данных.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Удалить конкретную запись из таблицы customer
+DELETE FROM customer
+WHERE country = 'Thailand';
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">14. Самосоединения (Self Joins)</h2>
-            <p class="text-lg leading-relaxed">Выполнение самосоединений для создания иерархических связей внутри одной таблицы.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- Самосоединение для отображения сотрудников и их менеджеров
-        SELECT E.employeeID, E.employeefirstname + ' ' + E.employeelastname AS [Полное Имя],
-               M.employeefirstname + ' ' + M.employeelastname AS [Имя Менеджера]
-        FROM staff E
-        INNER JOIN staff M ON E.managerID = M.employeeID;
-        
-        -- Левое внешнее соединение для отображения всех сотрудников с их менеджерами
-        SELECT E.employeeID, E.employeefirstname + ' ' + E.employeelastname AS [Полное Имя],
-               M.employeefirstname + ' ' + M.employeelastname AS [Имя Менеджера]
-        FROM staff E
-        LEFT JOIN staff M ON E.managerID = M.employeeID;
-            </code></pre>
-        </section>
+-- Удалить всю таблицу customer
+DROP TABLE customer;
+    </code></pre>
+</section>
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">15. Объединения SQL (Unions)</h2>
-            <p class="text-lg leading-relaxed">Использование UNION, UNION ALL, INTERSECT и EXCEPT для объединения или фильтрации нескольких наборов данных.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- UNION объединяет результаты и удаляет дубликаты
-        SELECT cust_lname, cust_fname FROM customer
-        UNION
-        SELECT cust_lname, cust_fname FROM customer_2;
-        
-        -- UNION ALL объединяет результаты и сохраняет все дубликаты
-        SELECT cust_lname, cust_fname FROM customer
-        UNION ALL
-        SELECT cust_lname, cust_fname FROM customer_2;
-        
-        -- INTERSECT показывает только строки, общие для обоих наборов данных
-        SELECT cust_lname, cust_fname FROM customer
-        INTERSECT
-        SELECT cust_lname, cust_fname FROM customer_2;
-        
-        -- EXCEPT показывает только строки, уникальные для первого набора данных
-        SELECT cust_lname, cust_fname FROM customer
-        EXCEPT
-        SELECT cust_lname, cust_fname FROM customer_2;
-            </code></pre>
-        </section>
+<!-- Section: Изменение типов данных -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">5. Изменение типов данных</h2>
+    <p class="text-lg leading-relaxed">
+        Изменение типов данных столбцов и использование временных преобразований типов данных.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Изменить тип данных существующего столбца
+ALTER TABLE customer
+ALTER COLUMN phonenumber VARCHAR(10);
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">16. Представления и временные таблицы</h2>
-            <p class="text-lg leading-relaxed">Создание представлений и временных таблиц для упрощения сложных запросов и управления временными данными.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- Создать представление для отображения информации о клиентах и данных о продажах
-        CREATE VIEW CustomerView AS
-        SELECT customerfirstname + ' ' + customerlastname AS [Имя Клиента],
-               customerphonenumber, inventoryname, saledate, salequantity, saleunitprice
-        FROM customer
-        INNER JOIN sale ON customer.customerid = sale.customerid
-        INNER JOIN inventory ON sale.inventoryid = inventory.inventoryid;
-        
-        -- Создание временной таблицы для временного хранения данных
-        CREATE TABLE #temp_Employee (
-            JobTitle VARCHAR(100),
-            EmployeesPerJob INT,
-            AvgAge INT,
-            AvgSalary INT
-        );
-        
-        -- Вставка данных во временную таблицу
-        INSERT INTO #temp_Employee
-        SELECT JobTitle, COUNT(JobTitle), AVG(Age), AVG(Salary)
-        FROM EmployeeDemographics emp
-        JOIN EmployeeSalary sal ON emp.EmployeeID = sal.EmployeeID
-        GROUP BY JobTitle;
-            </code></pre>
-        </section>
+-- Примеры CAST и CONVERT для временного изменения типа данных
+SELECT CAST('2017-08-25 00:00:00.000' AS DATE);
+SELECT CONVERT(DATE, '2017-08-25 00:00:00.000');
+    </code></pre>
+</section>
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">17. Общие табличные выражения (CTE)</h2>
-            <p class="text-lg leading-relaxed">Использование CTE для временных наборов данных, упрощающих сложные подзапросы.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- Определение CTE для разделения данных по полу и вычисления общего количества для каждой группы
-        WITH CTE_Employee AS (
-            SELECT FirstName, LastName, Gender, Salary,
-                   COUNT(Gender) OVER (PARTITION BY Gender) AS TotalGender
-            FROM EmployeeDemographics ED
-            JOIN EmployeeSalary ES ON ED.EmployeeID = ES.EmployeeID
-            WHERE Salary > '45000'
-        )
-        SELECT FirstName, LastName, Gender, TotalGender
-        FROM CTE_Employee
-        WHERE TotalGender = (SELECT MIN(TotalGender) FROM CTE_Employee);
-            </code></pre>
-        </section>
+       <!-- Section: Извлечение и фильтрация данных -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">6. Извлечение и фильтрация данных</h2>
+    <p class="text-lg leading-relaxed">
+        Использование фильтров и сортировки для извлечения определенных наборов данных.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Показать первые две записи из таблицы customer
+SELECT TOP 2 * FROM customer;
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">18. Дублирование и резервное копирование данных</h2>
-            <p class="text-lg leading-relaxed">Копирование данных таблицы для создания резервных копий или дублирования структур с данными.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- Дублирование записей клиентов с данными о продажах и запасах в новой таблице
-        SELECT customerfirstname + ' ' + customerlastname AS [Имя Клиента],
-               customerphonenumber, inventoryname, saledate, salequantity, saleunitprice
-        INTO customerRec
-        FROM customer
-        INNER JOIN sale ON customer.customerid = sale.customerid
-        INNER JOIN inventory ON sale.inventoryid = inventory.inventoryid
-        ORDER BY customerfirstname + ' ' + customerlastname, inventoryname;
-            </code></pre>
-        </section>
+-- Извлечение конкретных столбцов с сортировкой
+SELECT customerfirstname, customerlastname
+FROM customer
+ORDER BY customerlastname DESC;
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">19. Функции ранжирования SQL</h2>
-            <p class="text-lg leading-relaxed">Использование функций ранжирования, таких как ROW_NUMBER, RANK и DENSE_RANK, для присвоения рангов строкам данных.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- Использование ROW_NUMBER для получения уникального последовательного номера для каждой строки на основе зарплаты
-        SELECT *,
-               ROW_NUMBER() OVER (ORDER BY Salary DESC) AS SalaryRank
-        FROM EmployeeSalary;
-        
-        -- Использование RANK для присвоения рангов с возможными пропусками, если значения совпадают
-        SELECT *, 
-               RANK() OVER (ORDER BY Salary DESC) AS SalaryRank
-        FROM EmployeeSalary;
-        
-        -- Использование DENSE_RANK для присвоения рангов без пропусков
-        SELECT *, 
-               DENSE_RANK() OVER (ORDER BY Salary DESC) AS SalaryRank
-        FROM EmployeeSalary;
-            </code></pre>
-        </section>
+-- Использование LIKE для поиска по шаблону
+SELECT * FROM customer
+WHERE customerlastname LIKE '_r%';
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">20. Функция NTILE</h2>
-            <p class="text-lg leading-relaxed">Использование NTILE для разделения результирующего набора на заданное количество групп и присвоения группе ранга.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- Использование NTILE для разделения сотрудников на три группы на основе их зарплаты
-        SELECT *, 
-               NTILE(3) OVER (ORDER BY Salary DESC) AS SalaryGroup
-        FROM EmployeeSalary;
-        
-        -- Разделение по должности для получения групп NTILE в каждой категории должностей
-        SELECT *, 
-               NTILE(3) OVER (PARTITION BY JobTitle ORDER BY Salary DESC) AS SalaryGroup
-        FROM EmployeeSalary
-        ORDER BY JobTitle, SalaryGroup;
-            </code></pre>
-        </section>
+-- Использование IN для фильтрации по нескольким значениям
+SELECT * FROM customer
+WHERE customerlastname IN ('Brown', 'Michael', 'Jim');
+    </code></pre>
+</section>
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">21. Объединение данных с помощью соединений (Joins)</h2>
-            <p class="text-lg leading-relaxed">Использование различных типов соединений для объединения данных из нескольких таблиц на основе отношений.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- Внутреннее соединение для получения только совпадающих записей из обеих таблиц
-        SELECT * 
-        FROM inventory
-        INNER JOIN sale ON sale.inventoryid = inventory.inventoryid;
-        
-        -- Полное внешнее соединение для получения всех записей из обеих таблиц
-        SELECT sale.inventoryid, inventoryname 
-        FROM inventory
-        FULL OUTER JOIN sale ON sale.inventoryid = inventory.inventoryid
-        WHERE sale.inventoryid IS NULL;
-        
-        -- Левое соединение для получения всех записей из левой таблицы с совпадающими записями из правой
-        SELECT inventory.inventoryid, inventoryname
-        FROM inventory
-        LEFT JOIN sale ON sale.inventoryid = inventory.inventoryid
-        WHERE sale.inventoryid IS NULL;
-        
-        -- Правое соединение для получения всех записей из правой таблицы с совпадающими записями из левой
-        SELECT sale.inventoryid, inventoryname
-        FROM inventory
-        RIGHT JOIN sale ON sale.inventoryid = inventory.inventoryid;
-            </code></pre>
-        </section>
+<!-- Section: Агрегатные функции -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">7. Агрегатные функции</h2>
+    <p class="text-lg leading-relaxed">
+        Использование агрегатных функций, таких как COUNT, SUM и AVG для суммарной обработки данных.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Подсчет записей, соответствующих определенному условию
+SELECT COUNT(*) AS [Number of Records]
+FROM customer
+WHERE customerfirstname LIKE 'B%';
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">22. Оператор CASE</h2>
-            <p class="text-lg leading-relaxed">Использование оператора CASE для условной логики в SQL-запросах.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- Использование CASE для классификации сотрудников по возрасту
-        SELECT FirstName, LastName, Age,
-               CASE
-                   WHEN Age > 30 THEN 'Old'
-                   WHEN Age BETWEEN 27 AND 30 THEN 'Young'
-                   ELSE 'Baby'
-               END AS AgeCategory
-        FROM EmployeeDemographics
-        WHERE Age IS NOT NULL
-        ORDER BY Age;
-        
-        -- Применение CASE для расчета скорректированных зарплат в зависимости от должности
-        SELECT FirstName, LastName, JobTitle, Salary,
-               CASE
-                   WHEN JobTitle = 'Salesman' THEN Salary + (Salary * 0.10)
-                   WHEN JobTitle = 'Accountant' THEN Salary + (Salary * 0.05)
-                   WHEN JobTitle = 'HR' THEN Salary + (Salary * 0.000001)
-                   ELSE Salary + (Salary * 0.03)
-               END AS SalaryAfterRaise
-        FROM EmployeeDemographics ED
-        JOIN EmployeeSalary ES ON ED.EmployeeID = ES.EmployeeID;
-            </code></pre>
-        </section>
+-- Суммирование значений в определенных столбцах
+SELECT sale.employeeid, EmployeeFirstName, EmployeeLastName, 
+       COUNT(*) AS [Number of Orders],
+       SUM(salequantity) AS [Total Quantity]
+FROM sale
+JOIN employee ON sale.employeeid = employee.employeeid
+GROUP BY sale.employeeid, EmployeeFirstName, EmployeeLastName;
+    </code></pre>
+</section>
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">23. Строковые функции</h2>
-            <p class="text-lg leading-relaxed">Использование строковых функций SQL, таких как TRIM, REPLACE и SUBSTRING для обработки текста.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- Удаление пробелов с помощью TRIM, LTRIM и RTRIM
-        SELECT EmployeeID, TRIM(EmployeeID) AS IDTRIM FROM EmployeeErrors;
-        SELECT EmployeeID, LTRIM(EmployeeID) AS IDLTRIM FROM EmployeeErrors;
-        SELECT EmployeeID, RTRIM(EmployeeID) AS IDRTRIM FROM EmployeeErrors;
-        
-        -- Замена определенного текста в строке
-        SELECT LastName, REPLACE(LastName, '- Fired', '') AS LastNameFixed FROM EmployeeErrors;
-        
-        -- Извлечение подстрок с помощью SUBSTRING
-        SELECT SUBSTRING(FirstName, 1, 3) AS FirstNameShort FROM EmployeeErrors;
-            </code></pre>
-        </section>
+<!-- Section: Функции работы с датами и временем -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">8. Функции работы с датами и временем</h2>
+    <p class="text-lg leading-relaxed">
+        Использование SQL-функций для работы с датами и временем.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Подсчет записей по месяцам с суммированием сумм
+SELECT MONTH(saledate) AS [Month],
+       COUNT(*) AS [Number of Sales],
+       SUM(salequantity * saleunitprice) AS [Total Amount]
+FROM sale
+GROUP BY MONTH(saledate);
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">24. Хранимые процедуры</h2>
-            <p class="text-lg leading-relaxed">Создание хранимых процедур для автоматизации повторяющихся задач или инкапсуляции логики.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- Создание хранимой процедуры для возврата данных сотрудников на основе должности
-        CREATE PROCEDURE Temp_Employee @JobTitle NVARCHAR(100)
-        AS
-        BEGIN
-            DROP TABLE IF EXISTS #temp_employee;
-            CREATE TABLE #temp_employee (
-                JobTitle VARCHAR(100),
-                EmployeesPerJob INT,
-                AvgAge INT,
-                AvgSalary INT
-            );
-        
-            INSERT INTO #temp_employee
-            SELECT JobTitle, COUNT(JobTitle), AVG(Age), AVG(Salary)
-            FROM EmployeeDemographics emp
-            JOIN EmployeeSalary sal ON emp.EmployeeID = sal.EmployeeID
-            WHERE JobTitle = @JobTitle
-            GROUP BY JobTitle;
-        
-            SELECT * FROM #temp_employee;
-        END;
-        -- Выполнение хранимой процедуры с параметром
-        EXEC Temp_Employee @JobTitle = 'Salesman';
-            </code></pre>
-        </section>
+-- Поиск максимальных и минимальных значений
+SELECT MAX(Salary) FROM EmployeeSalary;
+SELECT MIN(Salary) FROM EmployeeSalary;
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">25. Подзапросы</h2>
-            <p class="text-lg leading-relaxed">Использование подзапросов в SELECT, FROM и WHERE для вложенных запросов.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- Подзапрос в SELECT для получения средней зарплаты наряду с индивидуальными зарплатами
-        SELECT EmployeeID, Salary, 
-               (SELECT AVG(Salary) FROM EmployeeSalary) AS AllAvgSalary
-        FROM EmployeeSalary;
-        
-        -- Подзапрос в WHERE для фильтрации записей
-        SELECT EmployeeID, JobTitle, Salary
-        FROM EmployeeSalary
-        WHERE Salary IN (SELECT MAX(Salary) FROM EmployeeSalary);
-        
-        -- Подзапрос в FROM для создания псевдонима таблицы с вычисленными данными
-        SELECT a.EmployeeID, a.Salary, a.AllAvgSalary
-        FROM (SELECT EmployeeID, Salary, AVG(Salary) OVER () AS AllAvgSalary 
-              FROM EmployeeSalary) AS a
-        ORDER BY a.EmployeeID;
-            </code></pre>
-        </section>
+-- Вычисление средних значений
+SELECT AVG(Salary) FROM EmployeeSalary;
+    </code></pre>
+</section>
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">26. Соединения без использования ключевого слова JOIN</h2>
-            <p class="text-lg leading-relaxed">Использование неявных соединений, указывая несколько таблиц в разделе FROM и связывая с помощью WHERE.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- Извлечение записей из таблиц inventory и sale путем сопоставления ID
-        SELECT * FROM inventory, sale
-        WHERE sale.inventoryid = inventory.inventoryid;
-        
-        -- Подсчет общей суммы с объединением таблиц
-        SELECT inventoryname, saledate, saleunitprice, salequantity,
-               salequantity * saleunitprice AS [Total Amount]
-        FROM sale, inventory
-        WHERE sale.inventoryid = inventory.inventoryid
-        GROUP BY sale.inventoryid, inventoryname, saledate, salequantity, saleunitprice;
-            </code></pre>
-        </section>
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6"> 27. Разделение и обработка строк</h2>
-            <p class="text-lg leading-relaxed">Использование SQL-функций для разделения строк по разделителям и обработки текстовых данных.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- Разделение строк по запятой с использованием функций SUBSTRING, CHARINDEX и LEN
-        SELECT PropertyAddress,
-               SUBSTRING(PropertyAddress, 1, CHARINDEX(',', PropertyAddress) - 1) AS Address,
-               SUBSTRING(PropertyAddress, CHARINDEX(',', PropertyAddress) + 1, LEN(PropertyAddress)) AS City
-        FROM NashvilleHousing;
-        
-        -- Использование PARSENAME для разделения по точкам
-        SELECT OwnerAddress,
-               PARSENAME(REPLACE(OwnerAddress, ',', '.'), 3) AS AddressPart1,
-               PARSENAME(REPLACE(OwnerAddress, ',', '.'), 2) AS AddressPart2,
-               PARSENAME(REPLACE(OwnerAddress, ',', '.'), 1) AS AddressPart3
-        FROM NashvilleHousing;
-            </code></pre>
-        </section>
+       <!-- Section: Группировка и фильтрация групп с помощью HAVING -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">9. Группировка и фильтрация групп с помощью HAVING</h2>
+    <p class="text-lg leading-relaxed">
+        Использование GROUP BY и HAVING для группировки данных и фильтрации агрегированных результатов.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Подсчет должностей с количеством больше одного
+SELECT JobTitle, COUNT(JobTitle) AS [Job Count]
+FROM EmployeeDemographics ED
+JOIN EmployeeSalary ES ON ED.EmployeeID = ES.EmployeeID
+GROUP BY JobTitle
+HAVING COUNT(JobTitle) > 1;
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">28. Удаление дубликатов записей</h2>
-            <p class="text-lg leading-relaxed">Использование ROW_NUMBER и CTE для выявления и удаления дубликатов записей.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- Использование ROW_NUMBER в CTE для идентификации дубликатов по определенным столбцам
-        WITH RowNumCTE AS (
-            SELECT *, 
-                   ROW_NUMBER() OVER (PARTITION BY ParcelID, PropertyAddress, SalePrice, SaleDate, LegalReference 
-                                      ORDER BY UniqueID) AS row_num
-            FROM NashvilleHousing
-        )
-        -- Выбор дубликатов для просмотра
-        SELECT * 
-        FROM RowNumCTE
-        WHERE row_num > 1
-        ORDER BY PropertyAddress;
-        
-        -- Удаление дубликатов записей
-        DELETE FROM RowNumCTE
-        WHERE row_num > 1;
-            </code></pre>
-        </section>
+-- Фильтрация средней зарплаты для должностей с определенным значением
+SELECT JobTitle, AVG(Salary) AS [Average Salary]
+FROM EmployeeDemographics ED
+JOIN EmployeeSalary ES ON ED.EmployeeID = ES.EmployeeID
+GROUP BY JobTitle
+HAVING AVG(Salary) > 45000
+ORDER BY [Average Salary];
+    </code></pre>
+</section>
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">29. Функции ранжирования SQL: RANK и DENSE_RANK</h2>
-            <p class="text-lg leading-relaxed">Использование RANK и DENSE_RANK для присвоения рангов строкам внутри разделов.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- Пример функции RANK для присвоения рангов на основе зарплаты с пропусками для совпадающих значений
-        SELECT *, 
-               RANK() OVER (ORDER BY Salary DESC) AS SalaryRank
-        FROM EmployeeSalary;
-        
-        -- Пример DENSE_RANK без пропусков для совпадающих значений
-        SELECT *, 
-               DENSE_RANK() OVER (ORDER BY Salary DESC) AS SalaryRank
-        FROM EmployeeSalary;
-        
-        -- Разделение по должностям для ранжирования RANK внутри каждой категории должностей
-        SELECT *, 
-               RANK() OVER (PARTITION BY JobTitle ORDER BY Salary DESC) AS SalaryRank
-        FROM EmployeeSalary
-        ORDER BY JobTitle, SalaryRank;
-            </code></pre>
-        </section>
+<!-- Section: Временное преобразование типов данных -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">10. Временное преобразование типов данных</h2>
+    <p class="text-lg leading-relaxed">
+        Использование временного преобразования типов данных с помощью функций CAST и CONVERT.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Использование CAST для преобразования типа данных
+SELECT CAST('2017-08-25 00:00:00.000' AS DATE);
 
-        <section class="mb-10">
-            <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">30. NTILE для группировки данных</h2>
-            <p class="text-lg leading-relaxed">Использование NTILE для разделения результатов на указанное количество групп для анализа.</p>
-            <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
-        -- Функция NTILE для разделения сотрудников на 3 группы на основе зарплаты
-        SELECT *, 
-               NTILE(3) OVER (ORDER BY Salary DESC) AS SalaryGroup
-        FROM EmployeeSalary;
-        
-        -- Разделение NTILE по должностям для деления зарплат на группы в каждой должности
-        SELECT *, 
-               NTILE(3) OVER (PARTITION BY JobTitle ORDER BY Salary DESC) AS SalaryGroup
-        FROM EmployeeSalary
-        ORDER BY JobTitle, SalaryGroup;
-            </code></pre>
-        </section>
+-- Использование CONVERT со стилем для преобразования типа данных
+SELECT CONVERT(DATE, '2017-08-25 00:00:00.000');
+    </code></pre>
+</section>
+
+<!-- Section: Условная логика с CASE -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">11. Условная логика с CASE</h2>
+    <p class="text-lg leading-relaxed">
+        Использование оператора CASE для условных выражений в SQL-запросах.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Использование CASE для классификации данных по условиям
+SELECT FirstName, LastName, Age,
+       CASE
+           WHEN Age > 30 THEN 'Old'
+           WHEN Age BETWEEN 27 AND 30 THEN 'Young'
+           ELSE 'Baby'
+       END AS AgeCategory
+FROM EmployeeDemographics
+WHERE Age IS NOT NULL
+ORDER BY Age;
+
+-- Применение CASE с арифметическими операциями
+SELECT FirstName, LastName, JobTitle, Salary,
+       CASE
+           WHEN JobTitle = 'Salesman' THEN Salary + (Salary * 0.10)
+           WHEN JobTitle = 'Accountant' THEN Salary + (Salary * 0.05)
+           WHEN JobTitle = 'HR' THEN Salary + (Salary * 0.000001)
+           ELSE Salary + (Salary * 0.03)
+       END AS SalaryAfterRaise
+FROM EmployeeDemographics ED
+JOIN EmployeeSalary ES ON ED.EmployeeID = ES.EmployeeID;
+    </code></pre>
+</section>
+
+
+       <!-- Section: Разделение данных -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">12. Разделение данных</h2>
+    <p class="text-lg leading-relaxed">
+        Разделение данных для нумерации строк, ранжирования или других вычислений в определенных группах.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Использование PARTITION BY для подсчета пола в подмножестве
+SELECT FirstName, LastName, Gender, Salary,
+       COUNT(Gender) OVER (PARTITION BY Gender) AS TotalGender
+FROM EmployeeDemographics ED
+JOIN EmployeeSalary ES ON ED.EmployeeID = ES.EmployeeID;
+
+-- Пример с ROW_NUMBER() для присвоения уникальных рангов внутри каждой группы
+SELECT *, ROW_NUMBER() OVER(PARTITION BY JobTitle ORDER BY Salary DESC) AS SalaryRank
+FROM EmployeeSalary
+ORDER BY JobTitle, SalaryRank;
+    </code></pre>
+</section>
+
+<!-- Section: Подзапросы -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">13. Подзапросы</h2>
+    <p class="text-lg leading-relaxed">
+        Использование подзапросов в SELECT, WHERE и FROM для извлечения или фильтрации данных.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Подзапрос в SELECT для расчета средней зарплаты
+SELECT EmployeeID, Salary,
+       (SELECT AVG(Salary) FROM EmployeeSalary) AS AllAvgSalary
+FROM EmployeeSalary;
+
+-- Подзапрос в WHERE для фильтрации по конкретным критериям
+SELECT EmployeeID, JobTitle, Salary
+FROM EmployeeSalary
+WHERE Salary IN (SELECT MAX(Salary) FROM EmployeeSalary);
+    </code></pre>
+</section>
+
+<!-- Section: Самосоединения (Self Joins) -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">14. Самосоединения (Self Joins)</h2>
+    <p class="text-lg leading-relaxed">
+        Выполнение самосоединений для создания иерархических связей внутри одной таблицы.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Самосоединение для отображения сотрудников и их менеджеров
+SELECT E.employeeID, E.employeefirstname + ' ' + E.employeelastname AS [Полное Имя],
+       M.employeefirstname + ' ' + M.employeelastname AS [Имя Менеджера]
+FROM staff E
+INNER JOIN staff M ON E.managerID = M.employeeID;
+
+-- Левое внешнее соединение для отображения всех сотрудников с их менеджерами
+SELECT E.employeeID, E.employeefirstname + ' ' + E.employeelastname AS [Полное Имя],
+       M.employeefirstname + ' ' + M.employeelastname AS [Имя Менеджера]
+FROM staff E
+LEFT JOIN staff M ON E.managerID = M.employeeID;
+    </code></pre>
+</section>
+
+
+      <!-- Section: Объединения SQL (Unions) -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">15. Объединения SQL (Unions)</h2>
+    <p class="text-lg leading-relaxed">
+        Использование UNION, UNION ALL, INTERSECT и EXCEPT для объединения или фильтрации нескольких наборов данных.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- UNION объединяет результаты и удаляет дубликаты
+SELECT cust_lname, cust_fname FROM customer
+UNION
+SELECT cust_lname, cust_fname FROM customer_2;
+
+-- UNION ALL объединяет результаты и сохраняет все дубликаты
+SELECT cust_lname, cust_fname FROM customer
+UNION ALL
+SELECT cust_lname, cust_fname FROM customer_2;
+
+-- INTERSECT показывает только строки, общие для обоих наборов данных
+SELECT cust_lname, cust_fname FROM customer
+INTERSECT
+SELECT cust_lname, cust_fname FROM customer_2;
+
+-- EXCEPT показывает только строки, уникальные для первого набора данных
+SELECT cust_lname, cust_fname FROM customer
+EXCEPT
+SELECT cust_lname, cust_fname FROM customer_2;
+    </code></pre>
+</section>
+
+<!-- Section: Представления и временные таблицы -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">16. Представления и временные таблицы</h2>
+    <p class="text-lg leading-relaxed">
+        Создание представлений и временных таблиц для упрощения сложных запросов и управления временными данными.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Создать представление для отображения информации о клиентах и данных о продажах
+CREATE VIEW CustomerView AS
+SELECT customerfirstname + ' ' + customerlastname AS [Имя Клиента],
+       customerphonenumber, inventoryname, saledate, salequantity, saleunitprice
+FROM customer
+INNER JOIN sale ON customer.customerid = sale.customerid
+INNER JOIN inventory ON sale.inventoryid = inventory.inventoryid;
+
+-- Создание временной таблицы для временного хранения данных
+CREATE TABLE #temp_Employee (
+    JobTitle VARCHAR(100),
+    EmployeesPerJob INT,
+    AvgAge INT,
+    AvgSalary INT
+);
+
+-- Вставка данных во временную таблицу
+INSERT INTO #temp_Employee
+SELECT JobTitle, COUNT(JobTitle), AVG(Age), AVG(Salary)
+FROM EmployeeDemographics emp
+JOIN EmployeeSalary sal ON emp.EmployeeID = sal.EmployeeID
+GROUP BY JobTitle;
+    </code></pre>
+</section>
+
+<!-- Section: Общие табличные выражения (CTE) -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">17. Общие табличные выражения (CTE)</h2>
+    <p class="text-lg leading-relaxed">
+        Использование CTE для временных наборов данных, упрощающих сложные подзапросы.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Определение CTE для разделения данных по полу и вычисления общего количества для каждой группы
+WITH CTE_Employee AS (
+    SELECT FirstName, LastName, Gender, Salary,
+           COUNT(Gender) OVER (PARTITION BY Gender) AS TotalGender
+    FROM EmployeeDemographics ED
+    JOIN EmployeeSalary ES ON ED.EmployeeID = ES.EmployeeID
+    WHERE Salary > '45000'
+)
+SELECT FirstName, LastName, Gender, TotalGender
+FROM CTE_Employee
+WHERE TotalGender = (SELECT MIN(TotalGender) FROM CTE_Employee);
+    </code></pre>
+</section>
+
+
+       <!-- Section: Дублирование и резервное копирование данных -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">18. Дублирование и резервное копирование данных</h2>
+    <p class="text-lg leading-relaxed">
+        Копирование данных таблицы для создания резервных копий или дублирования структур с данными.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Дублирование записей клиентов с данными о продажах и запасах в новой таблице
+SELECT customerfirstname + ' ' + customerlastname AS [Имя Клиента],
+       customerphonenumber, inventoryname, saledate, salequantity, saleunitprice
+INTO customerRec
+FROM customer
+INNER JOIN sale ON customer.customerid = sale.customerid
+INNER JOIN inventory ON sale.inventoryid = inventory.inventoryid
+ORDER BY customerfirstname + ' ' + customerlastname, inventoryname;
+    </code></pre>
+</section>
+
+<!-- Section: Функции ранжирования SQL -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">19. Функции ранжирования SQL</h2>
+    <p class="text-lg leading-relaxed">
+        Использование функций ранжирования, таких как ROW_NUMBER, RANK и DENSE_RANK, для присвоения рангов строкам данных.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Использование ROW_NUMBER для получения уникального последовательного номера для каждой строки на основе зарплаты
+SELECT *,
+       ROW_NUMBER() OVER (ORDER BY Salary DESC) AS SalaryRank
+FROM EmployeeSalary;
+
+-- Использование RANK для присвоения рангов с возможными пропусками, если значения совпадают
+SELECT *, 
+       RANK() OVER (ORDER BY Salary DESC) AS SalaryRank
+FROM EmployeeSalary;
+
+-- Использование DENSE_RANK для присвоения рангов без пропусков
+SELECT *, 
+       DENSE_RANK() OVER (ORDER BY Salary DESC) AS SalaryRank
+FROM EmployeeSalary;
+    </code></pre>
+</section>
+
+<!-- Section: Функция NTILE -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">20. Функция NTILE</h2>
+    <p class="text-lg leading-relaxed">
+        Использование NTILE для разделения результирующего набора на заданное количество групп и присвоения группе ранга.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Использование NTILE для разделения сотрудников на три группы на основе их зарплаты
+SELECT *, 
+       NTILE(3) OVER (ORDER BY Salary DESC) AS SalaryGroup
+FROM EmployeeSalary;
+
+-- Разделение по должности для получения групп NTILE в каждой категории должностей
+SELECT *, 
+       NTILE(3) OVER (PARTITION BY JobTitle ORDER BY Salary DESC) AS SalaryGroup
+FROM EmployeeSalary
+ORDER BY JobTitle, SalaryGroup;
+    </code></pre>
+</section>
+
+
+        <!-- Section: Объединение данных с помощью соединений (Joins) -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">21. Объединение данных с помощью соединений (Joins)</h2>
+    <p class="text-lg leading-relaxed">
+        Использование различных типов соединений для объединения данных из нескольких таблиц на основе отношений.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Внутреннее соединение для получения только совпадающих записей из обеих таблиц
+SELECT * 
+FROM inventory
+INNER JOIN sale ON sale.inventoryid = inventory.inventoryid;
+
+-- Полное внешнее соединение для получения всех записей из обеих таблиц
+SELECT sale.inventoryid, inventoryname 
+FROM inventory
+FULL OUTER JOIN sale ON sale.inventoryid = inventory.inventoryid
+WHERE sale.inventoryid IS NULL;
+
+-- Левое соединение для получения всех записей из левой таблицы с совпадающими записями из правой
+SELECT inventory.inventoryid, inventoryname
+FROM inventory
+LEFT JOIN sale ON sale.inventoryid = inventory.inventoryid
+WHERE sale.inventoryid IS NULL;
+
+-- Правое соединение для получения всех записей из правой таблицы с совпадающими записями из левой
+SELECT sale.inventoryid, inventoryname
+FROM inventory
+RIGHT JOIN sale ON sale.inventoryid = inventory.inventoryid;
+    </code></pre>
+</section>
+
+<!-- Section: Оператор CASE -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">22. Оператор CASE</h2>
+    <p class="text-lg leading-relaxed">
+        Использование оператора CASE для условной логики в SQL-запросах.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Использование CASE для классификации сотрудников по возрасту
+SELECT FirstName, LastName, Age,
+       CASE
+           WHEN Age > 30 THEN 'Old'
+           WHEN Age BETWEEN 27 AND 30 THEN 'Young'
+           ELSE 'Baby'
+       END AS AgeCategory
+FROM EmployeeDemographics
+WHERE Age IS NOT NULL
+ORDER BY Age;
+
+-- Применение CASE для расчета скорректированных зарплат в зависимости от должности
+SELECT FirstName, LastName, JobTitle, Salary,
+       CASE
+           WHEN JobTitle = 'Salesman' THEN Salary + (Salary * 0.10)
+           WHEN JobTitle = 'Accountant' THEN Salary + (Salary * 0.05)
+           WHEN JobTitle = 'HR' THEN Salary + (Salary * 0.000001)
+           ELSE Salary + (Salary * 0.03)
+       END AS SalaryAfterRaise
+FROM EmployeeDemographics ED
+JOIN EmployeeSalary ES ON ED.EmployeeID = ES.EmployeeID;
+    </code></pre>
+</section>
+
+<!-- Section: Строковые функции -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">23. Строковые функции</h2>
+    <p class="text-lg leading-relaxed">
+        Использование строковых функций SQL, таких как TRIM, REPLACE и SUBSTRING для обработки текста.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Удаление пробелов с помощью TRIM, LTRIM и RTRIM
+SELECT EmployeeID, TRIM(EmployeeID) AS IDTRIM FROM EmployeeErrors;
+SELECT EmployeeID, LTRIM(EmployeeID) AS IDLTRIM FROM EmployeeErrors;
+SELECT EmployeeID, RTRIM(EmployeeID) AS IDRTRIM FROM EmployeeErrors;
+
+-- Замена определенного текста в строке
+SELECT LastName, REPLACE(LastName, '- Fired', '') AS LastNameFixed FROM EmployeeErrors;
+
+-- Извлечение подстрок с помощью SUBSTRING
+SELECT SUBSTRING(FirstName, 1, 3) AS FirstNameShort FROM EmployeeErrors;
+    </code></pre>
+</section>
+
+
+        <!-- Section: Хранимые процедуры -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">24. Хранимые процедуры</h2>
+    <p class="text-lg leading-relaxed">
+        Создание хранимых процедур для автоматизации повторяющихся задач или инкапсуляции логики.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Создание хранимой процедуры для возврата данных сотрудников на основе должности
+CREATE PROCEDURE Temp_Employee @JobTitle NVARCHAR(100)
+AS
+BEGIN
+    DROP TABLE IF EXISTS #temp_employee;
+    CREATE TABLE #temp_employee (
+        JobTitle VARCHAR(100),
+        EmployeesPerJob INT,
+        AvgAge INT,
+        AvgSalary INT
+    );
+
+    INSERT INTO #temp_employee
+    SELECT JobTitle, COUNT(JobTitle), AVG(Age), AVG(Salary)
+    FROM EmployeeDemographics emp
+    JOIN EmployeeSalary sal ON emp.EmployeeID = sal.EmployeeID
+    WHERE JobTitle = @JobTitle
+    GROUP BY JobTitle;
+
+    SELECT * FROM #temp_employee;
+END;
+-- Выполнение хранимой процедуры с параметром
+EXEC Temp_Employee @JobTitle = 'Salesman';
+    </code></pre>
+</section>
+
+<!-- Section: Подзапросы -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">25. Подзапросы</h2>
+    <p class="text-lg leading-relaxed">
+        Использование подзапросов в SELECT, FROM и WHERE для вложенных запросов.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Подзапрос в SELECT для получения средней зарплаты наряду с индивидуальными зарплатами
+SELECT EmployeeID, Salary, 
+       (SELECT AVG(Salary) FROM EmployeeSalary) AS AllAvgSalary
+FROM EmployeeSalary;
+
+-- Подзапрос в WHERE для фильтрации записей
+SELECT EmployeeID, JobTitle, Salary
+FROM EmployeeSalary
+WHERE Salary IN (SELECT MAX(Salary) FROM EmployeeSalary);
+
+-- Подзапрос в FROM для создания псевдонима таблицы с вычисленными данными
+SELECT a.EmployeeID, a.Salary, a.AllAvgSalary
+FROM (SELECT EmployeeID, Salary, AVG(Salary) OVER () AS AllAvgSalary 
+      FROM EmployeeSalary) AS a
+ORDER BY a.EmployeeID;
+    </code></pre>
+</section>
+
+<!-- Section: Соединения без использования ключевого слова JOIN -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">26. Соединения без использования ключевого слова JOIN</h2>
+    <p class="text-lg leading-relaxed">
+        Использование неявных соединений, указывая несколько таблиц в разделе FROM и связывая с помощью WHERE.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Извлечение записей из таблиц inventory и sale путем сопоставления ID
+SELECT * FROM inventory, sale
+WHERE sale.inventoryid = inventory.inventoryid;
+
+-- Подсчет общей суммы с объединением таблиц
+SELECT inventoryname, saledate, saleunitprice, salequantity,
+       salequantity * saleunitprice AS [Total Amount]
+FROM sale, inventory
+WHERE sale.inventoryid = inventory.inventoryid
+GROUP BY sale.inventoryid, inventoryname, saledate, salequantity, saleunitprice;
+    </code></pre>
+</section>
+
+
+        <!-- Section: Разделение и обработка строк -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">27. Разделение и обработка строк</h2>
+    <p class="text-lg leading-relaxed">
+        Использование SQL-функций для разделения строк по разделителям и обработки текстовых данных.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Разделение строк по запятой с использованием функций SUBSTRING, CHARINDEX и LEN
+SELECT PropertyAddress,
+       SUBSTRING(PropertyAddress, 1, CHARINDEX(',', PropertyAddress) - 1) AS Address,
+       SUBSTRING(PropertyAddress, CHARINDEX(',', PropertyAddress) + 1, LEN(PropertyAddress)) AS City
+FROM NashvilleHousing;
+
+-- Использование PARSENAME для разделения по точкам
+SELECT OwnerAddress,
+       PARSENAME(REPLACE(OwnerAddress, ',', '.'), 3) AS AddressPart1,
+       PARSENAME(REPLACE(OwnerAddress, ',', '.'), 2) AS AddressPart2,
+       PARSENAME(REPLACE(OwnerAddress, ',', '.'), 1) AS AddressPart3
+FROM NashvilleHousing;
+    </code></pre>
+</section>
+
+<!-- Section: Удаление дубликатов записей -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">28. Удаление дубликатов записей</h2>
+    <p class="text-lg leading-relaxed">
+        Использование ROW_NUMBER и CTE для выявления и удаления дубликатов записей.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Использование ROW_NUMBER в CTE для идентификации дубликатов по определенным столбцам
+WITH RowNumCTE AS (
+    SELECT *, 
+           ROW_NUMBER() OVER (PARTITION BY ParcelID, PropertyAddress, SalePrice, SaleDate, LegalReference 
+                              ORDER BY UniqueID) AS row_num
+    FROM NashvilleHousing
+)
+-- Выбор дубликатов для просмотра
+SELECT * 
+FROM RowNumCTE
+WHERE row_num > 1
+ORDER BY PropertyAddress;
+
+-- Удаление дубликатов записей
+DELETE FROM RowNumCTE
+WHERE row_num > 1;
+    </code></pre>
+</section>
+
+<!-- Section: Функции ранжирования SQL: RANK и DENSE_RANK -->
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">29. Функции ранжирования SQL: RANK и DENSE_RANK</h2>
+    <p class="text-lg leading-relaxed">
+        Использование RANK и DENSE_RANK для присвоения рангов строкам внутри разделов.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Пример функции RANK для присвоения рангов на основе зарплаты с пропусками для совпадающих значений
+SELECT *, 
+       RANK() OVER (ORDER BY Salary DESC) AS SalaryRank
+FROM EmployeeSalary;
+
+-- Пример DENSE_RANK без пропусков для совпадающих значений
+SELECT *, 
+       DENSE_RANK() OVER (ORDER BY Salary DESC) AS SalaryRank
+FROM EmployeeSalary;
+
+-- Разделение по должностям для ранжирования RANK внутри каждой категории должностей
+SELECT *, 
+       RANK() OVER (PARTITION BY JobTitle ORDER BY Salary DESC) AS SalaryRank
+FROM EmployeeSalary
+ORDER BY JobTitle, SalaryRank;
+    </code></pre>
+</section>
+
+<section class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">30. NTILE для группировки данных</h2>
+    <p class="text-lg leading-relaxed">
+        Использование NTILE для разделения результатов на указанное количество групп для анализа.
+    </p>
+    <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg shadow-lg"><code>
+-- Функция NTILE для разделения сотрудников на 3 группы на основе зарплаты
+SELECT *, 
+       NTILE(3) OVER (ORDER BY Salary DESC) AS SalaryGroup
+FROM EmployeeSalary;
+
+-- Разделение NTILE по должностям для деления зарплат на группы в каждой должности
+SELECT *, 
+       NTILE(3) OVER (PARTITION BY JobTitle ORDER BY Salary DESC) AS SalaryGroup
+FROM EmployeeSalary
+ORDER BY JobTitle, SalaryGroup;
+    </code></pre>
+</section>
     </div>
     
     <div class="container mx-auto px-4 py-16">

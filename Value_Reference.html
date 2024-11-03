@@ -6,6 +6,50 @@
     <title>Стек и Куча в C#</title>
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Стили для подсказок */
+        .tooltip {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            color: #153182;
+            text-decoration: underline;
+        }
+        .tooltip .tooltip-icon {
+            width: 16px;
+            height: 16px;
+            background-color: #153182;
+            color: #fff;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+        .tooltip .tooltip-content {
+            visibility: hidden;
+            width: 250px;
+            background-color: #111827;
+            color: #fff;
+            text-align: left;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            bottom: 125%; /* Показываем над текстом */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+        .tooltip:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>    
     <script>
         function applyTheme(theme) {
             const darkThemeIcon = document.getElementById('dark-theme-icon');
@@ -42,31 +86,28 @@
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
 
-<nav class="bg-white dark:bg-gray-800 shadow fixed w-full z-10 top-0">
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-        <a href="#" class="text-2xl font-bold text-blue-600 dark:text-blue-400">Стек и Куча в C#</a>
-        <div class="hidden md:flex space-x-4">
-            <a href="#memory-management" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Управление памятью</a>
-            <a href="#stack" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Стек</a>
-            <a href="#heap" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Куча</a>
-            <a href="#gc" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">GC</a>
+    <nav class="bg-white dark:bg-gray-800 shadow fixed w-full z-10 top-0">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-blue-600 dark:text-blue-400">Стек и Куча в C#</a>
+            <div class="hidden md:flex space-x-4">
+                <a href="#memory-management" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Управление памятью</a>
+                <a href="#stack" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Стек</a>
+                <a href="#heap" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Куча</a>
+                <a href="#gc" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">GC</a>
+            </div>
+            <div class="flex items-center">
+                <button id="dark-mode-toggle" class="text-gray-500 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400 rounded-full p-2">
+                    <svg id="light-theme-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.02 12.02l-.707.707M6.343 17.657l-.707.707"></path>
+                        <circle cx="12" cy="12" r="5"></circle>
+                    </svg>
+                    <svg id="dark-theme-icon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
-        <!-- Тумблер переключения темы -->
-        <div class="flex items-center">
-            <button id="dark-mode-toggle" class="text-gray-500 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400 rounded-full p-2">
-                <!-- Иконка для светлой темы -->
-                <svg id="light-theme-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.02 12.02l-.707.707M6.343 17.657l-.707.707"></path>
-                    <circle cx="12" cy="12" r="5"></circle>
-                </svg>
-                <!-- Иконка для темной темы -->
-                <svg id="dark-theme-icon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"></path>
-                </svg>
-            </button>
-        </div>
-    </div>
-</nav>
+    </nav>
 
 <!-- Основной контент -->
 <div class="container mx-auto px-4 py-16 mt-16">
@@ -74,33 +115,33 @@
         <h1 class="text-4xl font-semibold text-blue-600 dark:text-blue-400">Стек и Куча в C#</h1>
         <p class="text-xl text-gray-600 dark:text-gray-300">Глубокое понимание управления памятью и сборки мусора</p>
     </header>
-
+    
     <!-- Управление памятью -->
     <section id="memory-management" class="mb-10">
         <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Управление памятью в стеке и куче</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
                 <h3 class="text-2xl font-semibold mb-4">Стек</h3>
-                <p>Локальные переменные, ссылки на объекты.</p>
-                <p><strong>LIFO</strong> (Last In, First Out)</p>
+                <p><span class="tooltip">Локальные переменные<span class="tooltip-icon">?</span><span class="tooltip-content">Переменные, объявленные в методах, доступные только в их области видимости.</span></span>, ссылки на объекты.</p>
+                <p><span class="tooltip"><strong>LIFO</strong><span class="tooltip-icon">?</span><span class="tooltip-content">Last In, First Out — последний добавленный элемент удаляется первым.</span></span></p>
                 <p>Автоматическое освобождение памяти.</p>
             </div>
             <div class="bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
                 <h3 class="text-2xl font-semibold mb-4">Куча</h3>
                 <p>Объекты ссылочных типов: классы, строки, массивы.</p>
-                <p>Управляется сборщиком мусора (GC).</p>
+                <p>Управляется <span class="tooltip">сборщиком мусора (GC)<span class="tooltip-icon">?</span><span class="tooltip-content">Garbage Collector — автоматическая система управления памятью.</span></span>.</p>
                 <p>Динамическое выделение памяти.</p>
             </div>
             <div class="bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
                 <h3 class="text-2xl font-semibold mb-4">GC</h3>
                 <p>Автоматическое управление памятью.</p>
-                <p>Маркировка, очистка и компактизация объектов.</p>
+                <p><span class="tooltip">Маркировка<span class="tooltip-icon">?</span><span class="tooltip-content">Определение достижимых объектов, чтобы оставить их в памяти.</span></span>, очистка и компактизация объектов.</p>
                 <p>Работа с поколениями объектов.</p>
             </div>
         </div>
-        <p class="text-lg mt-8 leading-relaxed">Стек используется для хранения локальных переменных и ссылок на объекты. Управляется по принципу <strong>LIFO</strong>. Куча хранит объекты ссылочных типов и управляется сборщиком мусора. Эти механизмы позволяют эффективно управлять памятью и освобождать её при необходимости.</p>
+        <p class="text-lg mt-8 leading-relaxed">Стек используется для хранения локальных переменных и ссылок на объекты. Управляется по принципу <span class="tooltip"><strong>LIFO</strong><span class="tooltip-icon">?</span><span class="tooltip-content">Last In, First Out — последний добавленный элемент удаляется первым.</span></span>. Куча хранит объекты ссылочных типов и управляется сборщиком мусора. Эти механизмы позволяют эффективно управлять памятью и освобождать её при необходимости.</p>
     </section>
-
+    
     <!-- Стек -->
     <section id="stack" class="mb-10">
         <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Стек</h2>
@@ -112,13 +153,13 @@
         </ul>
         <h3 class="text-2xl font-semibold mt-8">Особенности стека:</h3>
         <ul class="list-disc pl-6 space-y-2">
-            <li>Работает по принципу <strong>LIFO</strong> (Last In, First Out).</li>
+            <li>Работает по принципу <span class="tooltip"><strong>LIFO</strong><span class="tooltip-icon">?</span><span class="tooltip-content">Last In, First Out — последний добавленный элемент удаляется первым.</span></span>.</li>
             <li>Имеет ограниченный размер (обычно около 1 МБ по умолчанию).</li>
             <li>Быстрый доступ к данным.</li>
             <li>Память освобождается автоматически при выходе из области видимости.</li>
         </ul>
     </section>
-
+    
     <!-- Куча -->
     <section id="heap" class="mb-10">
         <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Куча</h2>
@@ -127,7 +168,7 @@
             <li>Объекты ссылочных типов.</li>
             <li>Значимые типы внутри объектов ссылочных типов (поля классов).</li>
             <li>Массивы, независимо от того, содержат ли они значимые или ссылочные типы.</li>
-            <li>Закрытые переменные в замыканиях (лямбда-выражения, анонимные методы).</li>
+            <li>Закрытые переменные в <span class="tooltip">замыканиях<span class="tooltip-icon">?</span><span class="tooltip-content">Переменные, которые замкнуты в лямбда-выражении или анонимном методе.</span></span> (лямбда-выражения, анонимные методы).</li>
         </ul>
         <h3 class="text-2xl font-semibold mt-8">Особенности кучи:</h3>
         <ul class="list-disc pl-6 space-y-2">
@@ -137,7 +178,7 @@
             <li>Память освобождается сборщиком мусора, когда объекты становятся недостижимыми.</li>
         </ul>
     </section>
-
+    
     <!-- Сборщик мусора (GC) -->
     <section id="gc" class="mb-10">
         <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Принципы работы сборщика мусора (GC)</h2>
@@ -146,7 +187,7 @@
             <p class="text-lg leading-relaxed">GC освобождает память автоматически, освобождая разработчика от ручного управления памятью.</p>
             <ul class="list-disc pl-6 space-y-2">
                 <li>Освобождение недостижимых объектов.</li>
-                <li>Обеспечение производительности и минимизация фрагментации памяти.</li>
+                <li>Обеспечение производительности и минимизация <span class="tooltip">фрагментации памяти<span class="tooltip-icon">?</span><span class="tooltip-content">Ситуация, когда свободная память разбита на мелкие несмежные участки.</span></span>.</li>
             </ul>
         </div>
         <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
@@ -158,7 +199,7 @@
             </ul>
         </div>
     </section>
-
+    
     <!-- Поколения в GC -->
     <section id="gc-generations" class="mb-10">
         <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Поколения в GC</h2>
@@ -185,49 +226,61 @@
             </tbody>
         </table>
     </section>
-
+    
     <!-- Графическое представление стека и кучи -->
-    <section id="memory-diagram" class="mb-10">
-        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Графическое представление стека и кучи</h2>
-        <div class="graph">
-            <img class="border-4 border-blue-600 dark:border-blue-400 rounded-lg shadow-lg" src="https://www.rusoaica.com/wp-content/uploads/img_5b73d7f592aa2.png" alt="Графическое представление стека и кучи">
-        </div>
-    </section>
+<section id="memory-diagram" class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Графическое представление стека и кучи</h2>
+    <div class="graph">
+        <img class="border-4 border-blue-600 dark:border-blue-400 rounded-lg shadow-lg" src="https://www.rusoaica.com/wp-content/uploads/img_5b73d7f592aa2.png" alt="Графическое представление стека и кучи">
+    </div>
+</section>
 
-    <!-- Финализация объектов и IDisposable -->
-    <section id="finalization" class="mb-10">
-        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Финализация объектов и интерфейс IDisposable</h2>
-        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 mb-6">
-            <h3 class="text-2xl font-semibold mb-4">Финализаторы</h3>
-            <p class="text-lg leading-relaxed">Финализаторы используются для очистки неуправляемых ресурсов, но они увеличивают время жизни объектов и снижают производительность. Предпочтительным является использование <strong>IDisposable</strong> и паттерна <strong>Dispose</strong>.</p>
-        </div>
-        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
-            <h3 class="text-2xl font-semibold mb-4">Интерфейс IDisposable</h3>
-            <p class="text-lg leading-relaxed">Позволяет разработчику явно освобождать ресурсы. В C# удобно использовать блок <strong>using</strong>, который автоматически вызывает <code>Dispose()</code>.</p>
-        </div>
-    </section>
+<!-- Финализация объектов и IDisposable -->
+<section id="finalization" class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Финализация объектов и интерфейс IDisposable</h2>
+    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 mb-6">
+        <h3 class="text-2xl font-semibold mb-4">Финализаторы</h3>
+        <p class="text-lg leading-relaxed">
+            Финализаторы используются для очистки <span class="tooltip">неуправляемых ресурсов<span class="tooltip-icon">?</span><span class="tooltip-content">Ресурсы, которые не контролируются сборщиком мусора, например, файлы или сетевые соединения.</span></span>, но они увеличивают время жизни объектов и снижают производительность. Предпочтительным является использование <strong>IDisposable</strong> и паттерна <strong>Dispose</strong>.
+        </p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
+        <h3 class="text-2xl font-semibold mb-4">Интерфейс IDisposable</h3>
+        <p class="text-lg leading-relaxed">
+            Позволяет разработчику явно освобождать ресурсы. В C# удобно использовать блок <span class="tooltip"><strong>using</strong><span class="tooltip-icon">?</span><span class="tooltip-content">Конструкция, которая автоматически вызывает метод Dispose() при завершении работы с объектом.</span></span>, который автоматически вызывает <code>Dispose()</code>.
+        </p>
+    </div>
+</section>
 
-    <!-- Практические рекомендации -->
-    <section id="best-practices" class="mb-10">
-        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Практические рекомендации для оптимизации памяти</h2>
-        <ul class="list-disc pl-6 space-y-2">
-            <li>Избегайте ручного вызова <code>GC.Collect()</code>, доверяя CLR.</li>
-            <li>Используйте <strong>IDisposable</strong> и <strong>using</strong> для освобождения ресурсов.</li>
-            <li>Профилируйте приложение для выявления утечек памяти.</li>
-        </ul>
-    </section>
+<!-- Практические рекомендации -->
+<section id="best-practices" class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Практические рекомендации для оптимизации памяти</h2>
+    <ul class="list-disc pl-6 space-y-2">
+        <li>
+            Избегайте ручного вызова <span class="tooltip"><code>GC.Collect()</code><span class="tooltip-icon">?</span><span class="tooltip-content">Принудительный вызов сборщика мусора, который обычно не рекомендуется, так как может снизить производительность.</span></span>, доверяя <span class="tooltip">CLR<span class="tooltip-icon">?</span><span class="tooltip-content">Common Language Runtime — среда выполнения .NET, отвечающая за управление памятью, сборку мусора и другие функции.</span></span>.
+        </li>
+        <li>Используйте <strong>IDisposable</strong> и <strong>using</strong> для освобождения ресурсов.</li>
+        <li>Профилируйте приложение для выявления утечек памяти.</li>
+    </ul>
+</section>
 
-    <!-- Работа с большими объектами (LOH) -->
-    <section id="loh" class="mb-10">
-        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Работа GC с большими объектами и LOH</h2>
-        <p class="text-lg leading-relaxed">Объекты размером более 85 000 байт попадают в Large Object Heap (LOH), который не компактизируется. Это может приводить к фрагментации памяти, и для оптимизации рекомендуется избегать частого создания и удаления крупных объектов.</p>
-    </section>
+<!-- Работа с большими объектами (LOH) -->
+<section id="loh" class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Работа GC с большими объектами и LOH</h2>
+    <p class="text-lg leading-relaxed">
+        Объекты размером более 85 000 байт попадают в <span class="tooltip">Large Object Heap (LOH)<span class="tooltip-icon">?</span><span class="tooltip-content">Специальная область кучи для крупных объектов, которая не компактизируется сборщиком мусора.</span></span>, который не компактизируется. Это может приводить к <span class="tooltip">фрагментации памяти<span class="tooltip-icon">?</span><span class="tooltip-content">Ситуация, когда свободная память разбита на мелкие несмежные участки, что затрудняет размещение новых объектов.</span></span>, и для оптимизации рекомендуется избегать частого создания и удаления крупных объектов.
+    </p>
+</section>
 
-    <!-- Многопоточные приложения и GC -->
-    <section id="multithreading" class="mb-10">
-        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Рекомендации для многопоточных приложений</h2>
-        <p class="text-lg leading-relaxed">GC в .NET потокобезопасен, но разработчикам необходимо быть внимательными при работе с объектами, разделяемыми между потоками. Использование слабых ссылок (Weak References) может помочь избежать удержания ненужных объектов в памяти.</p>
-    </section>
+<!-- Многопоточные приложения и GC -->
+<section id="multithreading" class="mb-10">
+    <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Рекомендации для многопоточных приложений</h2>
+    <p class="text-lg leading-relaxed">
+        GC в .NET <span class="tooltip">потокобезопасен<span class="tooltip-icon">?</span><span class="tooltip-content">Может корректно работать при одновременном выполнении нескольких потоков.</span></span>, но разработчикам необходимо быть внимательными при работе с объектами, разделяемыми между потоками. Использование <span class="tooltip">слабых ссылок (Weak References)<span class="tooltip-icon">?</span><span class="tooltip-content">Ссылки, которые не препятствуют сборщику мусора удалять объект, если на него больше нет сильных ссылок.</span></span> может помочь избежать удержания ненужных объектов в памяти.
+    </p>
+</section>
+
+    
 
 </div>
 
