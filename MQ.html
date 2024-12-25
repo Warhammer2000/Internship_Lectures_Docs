@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Message Queue: Кинематографичная визуализация и документация</title>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://threejs.org/examples/js/libs/tween.umd.js"></script>
+    <script>
+        // Проверка на сохраненную тему и ее применение
+        function applyTheme(theme) {
+            const darkThemeIcon = document.getElementById('dark-theme-icon');
+            const lightThemeIcon = document.getElementById('light-theme-icon');
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                darkThemeIcon.classList.add('hidden');
+                lightThemeIcon.classList.remove('hidden');
+                localStorage.theme = 'dark';
+            } else {
+                document.documentElement.classList.remove('dark');
+                lightThemeIcon.classList.add('hidden');
+                darkThemeIcon.classList.remove('hidden');
+                localStorage.theme = 'light';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Установка текущей темы
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                applyTheme('dark');
+            } else {
+                applyTheme('light');
+            }
+
+            // Обработка переключения темы
+            document.getElementById('dark-mode-toggle').addEventListener('click', function () {
+                if (document.documentElement.classList.contains('dark')) {
+                    applyTheme('light');
+                } else {
+                    applyTheme('dark');
+                }
+            });
+        });
+    </script>
+    <style>
+        /* Стили для подсказок */
+        .tooltip {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            color: #1D4ED8;
+            text-decoration: underline;
+        }
+        .tooltip .tooltip-icon {
+            width: 16px;
+            height: 16px;
+            background-color: #1D4ED8;
+            color: #fff;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+        .tooltip .tooltip-content {
+            visibility: hidden;
+            width: 250px;
+            background-color: #111827;
+            color: #fff;
+            text-align: left;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            bottom: 125%; /* Показываем над текстом */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+        .tooltip:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+        /* Стили для визуализации */
+        #threejs-container {
+            width: 100%;
+            height: 500px; /* Задайте желаемую высоту */
+        }
+        canvas { display: block; }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
+
+<!-- Навигационная панель -->
+<nav class="bg-white dark:bg-gray-800 shadow fixed w-full z-10 top-0">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="#" class="text-2xl font-bold text-blue-600 dark:text-blue-400">Документация</a>
+        <div class="hidden md:flex space-x-4">
+            <a href="#intro" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Введение</a>
+            <a href="#visualization" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Визуализация</a>
+            <a href="#concepts" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Основные понятия</a>
+            <a href="#getting-started" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Начало работы</a>
+            <a href="#code-examples" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Примеры кода</a>
+            <a href="#best-practices" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Рекомендации</a>
+            <a href="#benefits" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Преимущества</a>
+            <a href="#use-cases" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Примеры использования</a>
+            <a href="#conclusion" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Заключение</a>
+        </div>
+        <div class="flex items-center">
+            <button id="dark-mode-toggle" class="text-gray-500 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400 rounded-full p-2">
+                <!-- Иконка для светлой темы -->
+                <svg id="light-theme-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.02 12.02l-.707-.707M6.343 17.657l-.707.707"></path>
+                    <circle cx="12" cy="12" r="5"></circle>
+                </svg>
+                <!-- Иконка для темной темы -->
+                <svg id="dark-theme-icon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Основной контент -->
+<div class="container mx-auto px-4 py-16 mt-16">
+    <header class="text-center mb-10">
+        <h1 class="text-4xl font-semibold text-blue-600 dark:text-blue-400">Azure Message Queue: Визуализация и практическое руководство</h1>
+    </header>
+
+    <section id="intro" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Введение в Azure Message Queue</h2>
+        <p class="text-lg leading-relaxed">
+            Azure Message Queue, или Очередь сообщений Azure, — это облачный сервис, позволяющий реализовывать асинхронное взаимодействие между различными компонентами вашей системы. Это мощный инструмент для создания масштабируемых, надежных и гибких приложений, где требуется передача данных между службами без прямой зависимости.
+        </p>
+        <p class="text-lg leading-relaxed">
+            Вместо того чтобы компоненты напрямую вызывали друг друга, они обмениваются сообщениями через очередь. Отправляющий компонент, называемый <span class="tooltip">Producer<span class="tooltip-icon">?</span><span class="tooltip-content">Компонент системы, отправляющий сообщения в очередь.</span></span>, отправляет сообщение в очередь, а принимающий компонент, называемый <span class="tooltip">Consumer<span class="tooltip-icon">?</span><span class="tooltip-content">Компонент системы, получающий и обрабатывающий сообщения из очереди.</span></span>, забирает и обрабатывает это сообщение. Сама <span class="tooltip">Queue<span class="tooltip-icon">?</span><span class="tooltip-content">Сервис, хранящий сообщения до тех пор, пока они не будут обработаны.</span></span> выступает в роли буфера, обеспечивая надежную доставку сообщений даже в случае сбоев в работе отдельных компонентов.
+        </p>
+    </section>
+
+    <section id="visualization" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Кинематографичная визуализация Message Queue</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            Ниже представлена интерактивная визуализация процесса работы Azure Message Queue. Наблюдайте, как сообщения перемещаются от Producer к Consumer через Queue.
+        </p>
+        <div id="threejs-container"></div>
+    </section>
+
+    <section id="concepts" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Основные понятия Azure Message Queue</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-2">Producer (Производитель)</h3>
+                <p class="text-lg leading-relaxed">
+                    Producer — это приложение или служба, которая создает и отправляет <span class="tooltip">сообщения<span class="tooltip-icon">?</span><span class="tooltip-content">Единица данных, передаваемая между компонентами системы.</span></span> в очередь сообщений. Producer не знает о существовании Consumer и просто отправляет сообщения в заданную очередь.
+                </p>
+            </div>
+            <div>
+                <h3 class="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-2">Queue (Очередь)</h3>
+                <p class="text-lg leading-relaxed">
+                    Queue — это центральный элемент, который хранит отправленные сообщения в порядке их поступления. Она обеспечивает надежное хранение сообщений до тех пор, пока Consumer не будет готов их обработать. Azure Storage Queue обеспечивает надежное и масштабируемое хранилище для этих сообщений.
+                </p>
+            </div>
+            <div>
+                <h3 class="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-2">Consumer (Потребитель)</h3>
+                <p class="text-lg leading-relaxed">
+                    Consumer — это приложение или служба, которая подключается к очереди и извлекает из нее сообщения для обработки. Consumer может обрабатывать сообщения в своем собственном темпе и может быть запущен независимо от Producer.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="getting-started" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Начало работы с Azure Message Queue</h2>
+        <p class="text-lg leading-relaxed">
+            Чтобы начать использовать Azure Message Queue в вашем проекте, вам потребуется выполнить несколько шагов:
+        </p>
+        <ol class="list-decimal list-inside pl-4 text-lg leading-relaxed">
+            <li><strong>Создание учетной записи Azure:</strong> Если у вас еще нет подписки Azure, вам потребуется создать ее.</li>
+            <li><strong>Создание ресурса Storage Account:</strong> Azure Queue Storage является частью службы хранения Azure. Вам потребуется создать ресурс Storage Account в портале Azure.</li>
+            <li><strong>Создание очереди сообщений:</strong> Внутри вашего Storage Account создайте новую очередь сообщений (Queue).</li>
+            <li><strong>Получение строки подключения:</strong> Получите строку подключения (Connection String) для вашего Storage Account. Она понадобится для аутентификации при работе с очередью из вашего приложения.</li>
+            <li><strong>Установка NuGet-пакета (для .NET):</strong> Если вы используете .NET, установите NuGet-пакет <code>Azure.Storage.Queues</code>.</li>
+        </ol>
+    </section>
+
+    <section id="code-examples" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Примеры кода</h2>
+        <h3 class="text-2xl font-semibold text-blue-600 dark:text-blue-400 mt-6 mb-4">Отправка сообщения в очередь (Producer - C#)</h3>
+        <pre class="bg-gray-100 dark:bg-gray-800 border-l-4 border-blue-600 dark:border-blue-400 p-4 my-4 text-sm text-gray-800 dark:text-gray-300 font-mono overflow-auto">
+            <code>
+using Azure.Storage.Queues;
+using System;
+using System.Threading.Tasks;
+
+public class Producer
+{
+    private static string storageConnectionString = "YOUR_STORAGE_ACCOUNT_CONNECTION_STRING";
+    private static string queueName = "myqueue";
+
+    public static async Task SendMessageAsync(string messageText)
+    {
+        // Get the queue client
+        QueueClient queueClient = new QueueClient(storageConnectionString, queueName);
+
+        // Create the queue if it doesn't exist
+        await queueClient.CreateIfNotExistsAsync();
+
+        if (await queueClient.ExistsAsync())
+        {
+            // Send a message to the queue
+            await queueClient.SendMessageAsync(messageText);
+            Console.WriteLine($"Sent message: {messageText}");
+        }
+    }
+
+    public static async Task Main(string[] args)
+    {
+        await SendMessageAsync("Hello, Azure Queue!");
+    }
+}
+            </code>
+        </pre>
+
+        <h3 class="text-2xl font-semibold text-blue-600 dark:text-blue-400 mt-6 mb-4">Получение и обработка сообщения из очереди (Consumer - C#)</h3>
+        <pre class="bg-gray-100 dark:bg-gray-800 border-l-4 border-blue-600 dark:border-blue-400 p-4 my-4 text-sm text-gray-800 dark:text-gray-300 font-mono overflow-auto">
+            <code>
+using Azure.Storage.Queues;
+using Azure.Storage.Queues.Models;
+using System;
+using System.Threading.Tasks;
+
+public class Consumer
+{
+    private static string storageConnectionString = "YOUR_STORAGE_ACCOUNT_CONNECTION_STRING";
+    private static string queueName = "myqueue";
+
+    public static async Task ReceiveMessageAsync()
+    {
+        // Get the queue client
+        QueueClient queueClient = new QueueClient(storageConnectionString, queueName);
+
+        if (await queueClient.ExistsAsync())
+        {
+            // Get the next message
+            QueueMessage retrievedMessage = await queueClient.ReceiveMessageAsync();
+
+            if (retrievedMessage != null)
+            {
+                Console.WriteLine($"Received message: {retrievedMessage.Body}");
+
+                // Process the message here
+                // ...
+
+                // Delete the message after processing
+                await queueClient.DeleteMessageAsync(retrievedMessage.MessageId, retrievedMessage.PopReceipt);
+                Console.WriteLine($"Deleted message: {retrievedMessage.MessageId}");
+            }
+            else
+            {
+                Console.WriteLine("Queue is empty.");
+            }
+        }
+        else
+        {
+            Console.WriteLine($"Queue '{queueName}' does not exist.");
+        }
+    }
+
+    public static async Task Main(string[] args)
+    {
+        await ReceiveMessageAsync();
+    }
+}
+            </code>
+        </pre>
+        <p class="text-lg leading-relaxed">
+            Обязательно замените <code>"YOUR_STORAGE_ACCOUNT_CONNECTION_STRING"</code> на реальную строку подключения к вашей учетной записи хранения Azure.
+        </p>
+    </section>
+
+    <section id="best-practices" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Рекомендации и лучшие практики</h2>
+        <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
+            <li><strong>Обработка ошибок:</strong> Внедрите надежную обработку ошибок как на стороне Producer, так и на стороне Consumer. Рассмотрите использование повторных попыток (retries) с экспоненциальной задержкой для обработки временных сбоев.</li>
+            <li><strong>Идемпотентность Consumer:</strong> Убедитесь, что ваш Consumer может безопасно обрабатывать одно и то же сообщение несколько раз без нежелательных побочных эффектов. Это особенно важно при использовании шаблонов повторных попыток.</li>
+            <li><strong>Размер сообщений:</strong> Учитывайте ограничения на размер сообщений в Azure Queue Storage (на момент написания до 64 КБ). Для передачи больших объемов данных рассмотрите использование Azure Blob Storage и отправку ссылки на блоб в сообщении очереди.</li>
+            <li><strong>Безопасность:</strong> Никогда не храните строки подключения непосредственно в коде. Используйте Azure Key Vault или переменные окружения для безопасного хранения и управления учетными данными. Рассмотрите использование SAS (Shared Access Signatures) для предоставления ограниченного доступа к очереди.</li>
+            <li><strong>Мониторинг:</strong> Настройте мониторинг ваших очередей с помощью Azure Monitor, чтобы отслеживать длину очереди, количество сообщений и другие важные метрики. Это поможет вам выявлять проблемы и оптимизировать производительность.</li>
+            <li><strong>Масштабирование Consumer:</strong> Для обработки большого объема сообщений рассмотрите возможность масштабирования количества экземпляров Consumer.</li>
+            <li><strong>Обработка "мертвых" сообщений (Dead-letter queue):</strong>  Хотя Azure Storage Queues не имеют встроенной поддержки DLQ, можно реализовать собственный механизм, перемещая сообщения, которые не удалось обработать после нескольких попыток, в отдельную "мертвую" очередь для дальнейшего анализа.</li>
+            <li><strong>Сериализация сообщений:</strong> Выберите эффективный формат сериализации для ваших сообщений (например, JSON или Protocol Buffers). Убедитесь, что Producer и Consumer используют один и тот же формат.</li>
+        </ul>
+    </section>
+
+    <section id="benefits" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Преимущества использования Azure Message Queue</h2>
+        <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
+            <li><strong>Асинхронное взаимодействие:</strong> Позволяет компонентам взаимодействовать без ожидания немедленного ответа, повышая отзывчивость системы.</li>
+            <li><strong>Разделение ответственности (Decoupling):</strong> Producer и Consumer не зависят друг от друга, что упрощает разработку, развертывание и масштабирование.</li>
+            <li><strong>Надежность:</strong> Сообщения сохраняются в очереди до обработки, обеспечивая надежную доставку даже при временных сбоях компонентов.</li>
+            <li><strong>Масштабируемость:</strong> Легко масштабируется для обработки большого объема сообщений и увеличения количества Producer и Consumer.</li>
+            <li><strong>Балансировка нагрузки:</strong> Можно распределить обработку сообщений между несколькими Consumers, обеспечивая более равномерную загрузку.</li>
+        </ul>
+    </section>
+
+    <section id="use-cases" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Примеры использования Azure Message Queue</h2>
+        <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
+            <li><strong>Обработка фоновых задач:</strong> Разгрузка веб-приложений путем отправки трудоемких задач (например, обработка изображений, отправка электронной почты) в очередь для фоновой обработки.</li>
+            <li><strong>Интеграция микросервисов:</strong> Обеспечение асинхронного обмена данными между независимыми микросервисами.</li>
+            <li><strong>Обработка заказов:</strong> Гарантированная обработка заказов в электронной коммерции, даже при высокой нагрузке.</li>
+            <li><strong>Логирование и мониторинг:</strong> Сбор и централизованная обработка логов и метрик от различных компонентов системы.</li>
+        </ul>
+    </section>
+
+    <section id="conclusion" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Заключение</h2>
+        <p class="text-lg leading-relaxed">
+            Azure Message Queue является ключевым компонентом для построения современных, масштабируемых и надежных облачных приложений. Визуализация демонстрирует простоту и элегантность процесса передачи сообщений, а понимание основных концепций, принципов работы и лучших практик позволяет эффективно использовать этот сервис в ваших проектах.
+        </p>
+    </section>
+
+</div>
+
+<footer class="text-center bg-blue-600 dark:bg-blue-400 text-white dark:text-gray-900 py-6 mt-10 rounded-lg">
+    2023 Azure Message Queue: Визуализация и практическое руководство
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // === Настройка сцены ===
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, document.getElementById('threejs-container').offsetWidth / document.getElementById('threejs-container').offsetHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, canvas: document.querySelector('#threejs-container canvas') || undefined }); // Сглаживание
+        renderer.setSize(document.getElementById('threejs-container').offsetWidth, document.getElementById('threejs-container').offsetHeight);
+        document.getElementById('threejs-container').appendChild(renderer.domElement);
+        renderer.setClearColor(0xeeeeee); // Светлый фон
+
+        // === Объекты ===
+        // Producer
+        const producerGeometry = new THREE.BoxGeometry(1, 1, 1);
+        const producerMaterial = new THREE.MeshStandardMaterial({ color: 0x4CAF50 }); // Зеленый
+        const producer = new THREE.Mesh(producerGeometry, producerMaterial);
+        producer.position.set(-5, 0, 0);
+        scene.add(producer);
+
+        // Queue (сделаем более "стеклянной")
+        const queueGeometry = new THREE.CylinderGeometry(1, 1, 2, 32);
+        const queueMaterial = new THREE.MeshStandardMaterial({ color: 0x64B5F6, transparent: true, opacity: 0.7, roughness: 0.2, metalness: 0.1 }); // Голубой, прозрачный
+        const queue = new THREE.Mesh(queueGeometry, queueMaterial);
+        queue.position.set(0, 0, 0);
+        scene.add(queue);
+
+        // Consumer
+        const consumerGeometry = new THREE.BoxGeometry(1, 1, 1);
+        const consumerMaterial = new THREE.MeshStandardMaterial({ color: 0xF44336 }); // Красный
+        const consumer = new THREE.Mesh(consumerGeometry, consumerMaterial);
+        consumer.position.set(5, 0, 0);
+        scene.add(consumer);
+
+        // Message (пусть будет выделяться)
+        const messageGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+        const messageMaterial = new THREE.MeshStandardMaterial({ color: 0xFFC107, emissive: 0x555500 }); // Желтый, светящийся
+        const message = new THREE.Mesh(messageGeometry, messageMaterial);
+        message.position.set(-4, 0, 0);
+        scene.add(message);
+
+        // === Надписи ===
+        const fontLoader = new THREE.FontLoader();
+
+        fontLoader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font) => {
+            const createLabel = (text, targetObject) => {
+                const textGeometry = new THREE.TextGeometry(text, {
+                    font: font,
+                    size: 0.3,
+                    height: 0.1,
+                    curveSegments: 12,
+                    bevelEnabled: true,
+                    bevelThickness: 0.02,
+                    bevelSize: 0.01,
+                    bevelOffset: 0,
+                    bevelSegments: 5
+                });
+                const textMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 }); // Черный цвет
+                const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+                textMesh.position.set(targetObject.position.x, targetObject.position.y + 1.2, targetObject.position.z);
+                textMesh.geometry.center(); // Центрирование относительно позиции
+                return textMesh;
+            };
+
+            const producerLabel = createLabel("Producer", producer);
+            scene.add(producerLabel);
+
+            const queueLabel = createLabel("Queue", queue);
+            scene.add(queueLabel);
+
+            const consumerLabel = createLabel("Consumer", consumer);
+            scene.add(consumerLabel);
+        });
+
+        // === Освещение ===
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(2, 3, 4);
+        scene.add(directionalLight);
+
+        camera.position.set(0, 2, 10);
+
+        // === Анимация ===
+        const messageSpeed = 0.05;
+        let messageState = 'movingToQueue';
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (messageState === 'movingToQueue') {
+                message.position.x += messageSpeed;
+                message.position.y = Math.sin(message.position.x * 2) * 0.3; // Волнообразное движение
+                if (message.position.x >= -1.5) {
+                    messageState = 'enteringQueue';
+                }
+            } else if (messageState === 'enteringQueue') {
+                if (message.scale.x > 0.1) {
+                    message.scale.multiplyScalar(0.95); // Уменьшение при входе
+                } else {
+                    messageState = 'inQueue';
+                }
+            } else if (messageState === 'inQueue') {
+                // Пульсация очереди
+                queue.scale.y = 1 + Math.sin(Date.now() * 0.005) * 0.2;
+                if (Date.now() % 150 > 148) {
+                    messageState = 'exitingQueue';
+                    message.scale.set(1, 1, 1); // Возвращаем масштаб
+                }
+            } else if (messageState === 'exitingQueue') {
+                message.position.x += messageSpeed;
+                message.position.y = Math.sin(message.position.x * 2 + Math.PI) * 0.3; // Волна в противофазе
+                if (message.position.x >= 3.5) {
+                    messageState = 'enteringConsumer';
+                }
+            }  else if (messageState === 'enteringConsumer') {
+                if (message.scale.x > 0.1) {
+                    message.scale.multiplyScalar(0.95); // Уменьшение при входе к Consumer
+                } else {
+                    messageState = 'arrived';
+                    message.visible = false;
+                    setTimeout(() => { // Перезапуск анимации через паузу
+                        messageState = 'movingToQueue';
+                        message.position.set(-4, 0, 0);
+                        message.visible = true;
+                        message.scale.set(1, 1, 1);
+                    }, 1500);
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+
+animate();
+
+ // === Анимация камеры (пример) ===
+function animateCamera() {
+    const startPosition = new THREE.Vector3(0, 2, 10);
+    const queueFocusPosition = new THREE.Vector3(0, 1, 5);
+    const consumerFocusPosition = new THREE.Vector3(5, 2, 8);
+    let cameraProgress = 0; // От 0 до 1
+
+    function updateCamera() {
+        if (messageState === 'movingToQueue' && cameraProgress < 1) {
+            cameraProgress += 0.01;
+            camera.position.lerpVectors(startPosition, queueFocusPosition, cameraProgress);
+        } else if (messageState === 'inQueue') {
+            // Камера сфокусирована на очереди
+        } else if (messageState === 'exitingQueue' && cameraProgress > 0) {
+             cameraProgress -= 0.01;
+             camera.position.lerpVectors(queueFocusPosition, consumerFocusPosition, 1 - cameraProgress);
+        } else if (messageState === 'enteringConsumer') {
+            camera.lookAt(consumer.position);
+        } else if (messageState === 'arrived') {
+            camera.position.copy(startPosition);
+            camera.lookAt(scene.position);
+            cameraProgress = 0;
+        }
+        camera.lookAt(scene.position);
+    }
+
+    updateCamera();
+    requestAnimationFrame(animateCamera);
+}
+
+animateCamera();
+
+// === Обработчик изменения размера окна ===
+function onWindowResize() {
+    camera.aspect = document.getElementById('threejs-container').offsetWidth / document.getElementById('threejs-container').offsetHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(document.getElementById('threejs-container').offsetWidth, document.getElementById('threejs-container').offsetHeight);
+}
+window.addEventListener('resize', onWindowResize, false);
+});
+</script>
+</body>
+</html>
