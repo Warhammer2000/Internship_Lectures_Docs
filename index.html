@@ -1,142 +1,271 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Документация по проекту</title>
-    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Документация по проекту</title>
+  
+  <!-- Подключаем шрифты и Tailwind -->
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Подключаем D3.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.6.1/d3.min.js"></script>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
 
-    <nav class="bg-white dark:bg-gray-800 shadow fixed w-full z-10 top-0">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-3xl font-bold text-blue-600 dark:text-blue-400">Документация</a>
-            <button id="dark-mode-toggle" class="text-gray-500 dark:text-gray-300 focus:outline-none rounded-full p-2">
-                <svg id="light-theme-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.02 12.02l-.707.707M6.343 17.657l-.707.707"></path>
-                    <circle cx="12" cy="12" r="5"></circle>
-                </svg>
-                <svg id="dark-theme-icon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"></path>
-                </svg>
-            </button>
-        </div>
-    </nav>
-    <div class="container mx-auto px-4 py-16 mt-16">
-        <header class="text-center mb-12">
-            <label for="searchInput" class="text-lg font-semibold text-blue-400">Введите поисковый запрос:</label>
-            <input type="text" id="searchInput" class="w-full mt-2 p-2 rounded bg-gray-800 text-white border border-blue-500" placeholder="Введите ключевое слово...">
-            <ul id="searchResults" class="mt-4 text-lg text-left text-gray-800 dark:text-gray-100"></ul>
-        </header>
+  <!-- Шапка -->
+  <nav class="bg-white dark:bg-gray-800 shadow fixed w-full z-10 top-0">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-3xl font-bold text-blue-600 dark:text-blue-400">Документация</a>
+      <button id="dark-mode-toggle" class="text-gray-500 dark:text-gray-300 focus:outline-none rounded-full p-2">
+        <!-- Иконка "Солнце" -->
+        <svg id="light-theme-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2"
+             viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3v1m0 16v1m9-9h-1M4 12H3
+                   m15.364 6.364l-.707-.707
+                   M6.343 6.343l-.707-.707
+                   m12.02 12.02l-.707.707
+                   M6.343 17.657l-.707.707"></path>
+          <circle cx="12" cy="12" r="5"></circle>
+        </svg>
+        <!-- Иконка "Луна" -->
+        <svg id="dark-theme-icon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+             viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1111.21 3
+                   a7 7 0 009.79 9.79z"></path>
+        </svg>
+      </button>
     </div>
+  </nav>
 
-<div class="container mx-auto px-4 py-16 mt-16">
+  <!-- Контейнер для графа -->
+  <div class="container mx-auto px-4 mt-16">
+    <div id="graph" class="w-full h-[600px] mb-12 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg shadow">
+      <!-- Граф D3 будет тут -->
+    </div>
+  </div>
+
+  <!-- Блок с карточками/документацией -->
+  <div class="container mx-auto px-4 py-16 mt-16">
     <header class="text-center mb-12">
-        <h1 class="text-5xl font-bold text-blue-600 dark:text-blue-400">Документация проекта</h1>
-        <p class="text-xl text-gray-600 dark:text-gray-300 mt-4">Добро пожаловать в документацию, собранную для вашего проекта. Выберите тему, чтобы узнать больше.</p>
+      <h1 class="text-5xl font-bold text-blue-600 dark:text-blue-400">Документация проекта</h1>
+      <p class="text-xl text-gray-600 dark:text-gray-300 mt-4">
+        Добро пожаловать в документацию, собранную для вашего проекта. Выберите тему, чтобы узнать больше.
+      </p>
     </header>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <a href="SQl.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
-            <h2 class="text-2xl font-semibold mb-4">SQL Guide</h2>
-            <p>Основные команды SQL для создания и управления базами данных.</p>
-        </a>
+    <div class="container mx-auto px-4 py-16 mt-16">
+        <header class="text-center mb-12">
+            <h1 class="text-5xl font-bold text-blue-600 dark:text-blue-400">Документация проекта</h1>
+            <p class="text-xl text-gray-600 dark:text-gray-300 mt-4">Добро пожаловать в документацию, собранную для вашего проекта. Выберите тему, чтобы узнать больше.</p>
+        </header>
 
-        <a href="Angular.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
-            <h2 class="text-2xl font-semibold mb-4">Angular Guide</h2>
-            <p>Основные концепции Angular, включая модули и маршрутизацию.</p>
-        </a>
-
-        <a href="Asynchronous.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
-            <h2 class="text-2xl font-semibold mb-4">Asynchronous programming</h2>
-            <p>Руководство по асинхронности в C# и ASP.NET Core.</p>
-        </a>
-
-        <a href="EF_Core.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
-            <h2 class="text-2xl font-semibold mb-4">Entity Framework Core</h2>
-            <p>Обзор Entity Framework Core для работы с базами данных.</p>
-        </a>
-
-        <a href="Value_Reference.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
-            <h2 class="text-2xl font-semibold mb-4">Data Types: Value and Reference</h2>
-            <p>Сравнение значимых и ссылочных типов в C#.</p>
-        </a>
-
-        <!-- Новая ссылка на Logger.html -->
-        <a href="Logger.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
-            <h2 class="text-2xl font-semibold mb-4">Logger Guide</h2>
-            <p>Подробное руководство по конфигурации Serilog и созданию логов.</p>
-        </a>
-
-        <!-- Новая ссылка на Middleware.htefml -->
-        <a href="temp.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
-            <h2 class="text-2xl font-semibold mb-4">Middleware Guide</h2>
-            <p>Описание Middleware в ASP.NET Core и создание кастомных компонентов.</p>
-        </a>
-
-        <a href="Architecture.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
-            <h2 class="text-2xl font-semibold mb-4">Architecture Guide</h2>
-            <p>Описание Архитектур в .NET</p>
-        </a>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <a href="SQl.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
+                <h2 class="text-2xl font-semibold mb-4">SQL Guide</h2>
+                <p>Основные команды SQL для создания и управления базами данных.</p>
+            </a>
+            <a href="Angular.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
+                <h2 class="text-2xl font-semibold mb-4">Angular Guide</h2>
+                <p>Основные концепции Angular, включая модули и маршрутизацию.</p>
+            </a>
+            <a href="Asynchronous.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
+                <h2 class="text-2xl font-semibold mb-4">Asynchronous programming</h2>
+                <p>Руководство по асинхронности в C# и ASP.NET Core.</p>
+            </a>
+            <a href="EF_Core.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
+                <h2 class="text-2xl font-semibold mb-4">Entity Framework Core</h2>
+                <p>Обзор Entity Framework Core для работы с базами данных.</p>
+            </a>
+            <a href="Value_Reference.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
+                <h2 class="text-2xl font-semibold mb-4">Data Types: Value and Reference</h2>
+                <p>Сравнение значимых и ссылочных типов в C#.</p>
+            </a>
+            <a href="Logger.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
+                <h2 class="text-2xl font-semibold mb-4">Logger Guide</h2>
+                <p>Подробное руководство по конфигурации Serilog и созданию логов.</p>
+            </a>
+            <a href="Middleware.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
+                <h2 class="text-2xl font-semibold mb-4">Middleware Guide</h2>
+                <p>Описание Middleware в ASP.NET Core и создание кастомных компонентов.</p>
+            </a>
+            <a href="Architecture.html" class="block bg-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 hover:bg-blue-700">
+                <h2 class="text-2xl font-semibold mb-4">Architecture Guide</h2>
+                <p>Описание Архитектур в .NET</p>
+            </a>
+        </div>
     </div>
-</div>
-    <!--evwvff-->
-<script>
-       let indexData = {};
+  </div>
 
-// Загружаем JSON-файл
-async function loadIndex() {
-    try {
-        const response = await fetch('search_index.json');
-        indexData = await response.json();
-    } catch (error) {
-        console.error("Ошибка загрузки JSON:", error);
-    }
-}
+  <script>
+    // Пример: ссылки для документов (по-хорошему вынести в отдельную структуру или JSON)
+    const docLinks = {
+      "SQL Guide": "docs/sql-guide.html",
+      "Data Types: Value and Reference": "docs/data-types.html",
+      "Angular Guide": "docs/angular-guide.html",
+      "Entity Framework Core": "docs/ef-core.html",
+      "Asynchronous programming": "docs/async-guide.html",
+      "Middleware Guide": "docs/middleware-guide.html",
+      "Logger Guide": "docs/logger-guide.html",
+      "Architecture Guide": "docs/architecture.html"
+    };
 
-// Инициализация загрузки JSON-файла при открытии страницы
-window.onload = loadIndex;
+    // Категории и документы
+    const categories = {
+      "Основы": ["SQL Guide", "Data Types: Value and Reference"],
+      "Фреймворки": ["Angular Guide", "Entity Framework Core"],
+      "Продвинутое": ["Asynchronous programming", "Middleware Guide"],
+      "Инструменты": ["Logger Guide", "Architecture Guide"]
+    };
 
-// Функция поиска в реальном времени
-document.getElementById('searchInput').addEventListener('input', function() {
-    const keyword = this.value.toLowerCase().trim();
-    const resultsContainer = document.getElementById('searchResults');
-    resultsContainer.innerHTML = ''; // Очищаем результаты
+    const nodes = [];
+    const links = [];
+    let id = 0;
 
-    if (keyword) {
-        Object.keys(indexData).forEach((file) => {
-            indexData[file].forEach((text) => {
-                if (text.toLowerCase().includes(keyword)) {
-                    const resultItem = document.createElement('li');
-                    resultItem.classList.add('bg-blue-100', 'dark:bg-gray-700', 'p-4', 'rounded', 'shadow', 'mb-2');
-                    
-                    resultItem.innerHTML = `
-                        <a href="${file}" class="font-bold text-blue-600 dark:text-blue-400">${file}</a> - ${highlightKeyword(text, keyword)}
-                    `;
-                    resultsContainer.appendChild(resultItem);
-                }
-            });
+    // Формируем массив узлов (nodes) и связей (links)
+    Object.keys(categories).forEach(category => {
+      id++;
+      const categoryId = id;
+      // Узел-категория
+      nodes.push({ 
+        id: categoryId, 
+        name: category, 
+        type: "category" 
+      });
+
+      categories[category].forEach(doc => {
+        id++;
+        nodes.push({ 
+          id: id, 
+          name: doc, 
+          type: "doc" 
+        });
+        links.push({ 
+          source: categoryId, 
+          target: id 
+        });
+      });
+    });
+
+    // Зададим размеры svg из контейнера
+    const container = document.getElementById("graph");
+    const svgWidth = container.clientWidth;
+    const svgHeight = container.clientHeight;
+
+    // Создадим элемент svg внутри #graph
+    const svg = d3.select("#graph")
+      .append("svg")
+      .attr("width", svgWidth)
+      .attr("height", svgHeight);
+
+    // Создаем симуляцию
+    const simulation = d3.forceSimulation(nodes)
+      .force("link", d3.forceLink(links).id(d => d.id).distance(120))
+      .force("charge", d3.forceManyBody().strength(-250))
+      // Притягиваем узлы к центру
+      .force("center", d3.forceCenter(svgWidth / 2, svgHeight / 2))
+      // Дополнительные силы по осям X и Y, чтобы стремились к центру
+      .force("x", d3.forceX(svgWidth / 2).strength(0.03))
+      .force("y", d3.forceY(svgHeight / 2).strength(0.03))
+      .on("tick", ticked);
+
+    // Создаем линии (links)
+    const link = svg.append("g")
+      .attr("stroke", "#ccc")
+      .attr("stroke-width", 1.5)
+      .selectAll("line")
+      .data(links)
+      .enter()
+      .append("line");
+
+    // Создаем узлы (nodes) в виде кружочков
+    const node = svg.append("g")
+      .selectAll("circle")
+      .data(nodes)
+      .enter()
+      .append("circle")
+      .attr("r", d => d.type === "category" ? 14 : 10)
+      .attr("fill", d => d.type === "category" ? "#3B82F6" : "#60A5FA") 
+      .attr("stroke", "#1E3A8A")
+      .attr("stroke-width", 1)
+      .call(drag(simulation))
+      // При клике переходим на страницу, если это документ
+      .on("click", (event, d) => {
+        if (d.type === "doc" && docLinks[d.name]) {
+          window.open(docLinks[d.name], "_blank");
+        }
+      });
+
+    // Текст (название узлов)
+    const text = svg.append("g")
+      .selectAll("text")
+      .data(nodes)
+      .enter()
+      .append("text")
+      .attr("font-size", "12px")
+      .attr("font-weight", "600")
+      .attr("fill", "#ffffff")
+      .text(d => d.name)
+      .call(drag(simulation));
+
+    // Функция "притягивания" (drag)
+    function drag(simulation) {
+      return d3.drag()
+        .on("start", (event, d) => {
+          if (!event.active) simulation.alphaTarget(0.3).restart();
+          d.fx = d.x;
+          d.fy = d.y;
+        })
+        .on("drag", (event, d) => {
+          // Можно разрешить узлам выходить за границы, 
+          // чтобы они не прилипали к стенке.
+          d.fx = event.x;
+          d.fy = event.y;
+        })
+        .on("end", (event, d) => {
+          if (!event.active) simulation.alphaTarget(0);
+          // Отпускаем узлы после драга, чтобы они снова анимированно стягивались к центру
+          d.fx = null;
+          d.fy = null;
         });
     }
-});
 
-// Функция выделения ключевого слова
-function highlightKeyword(text, keyword) {
-    const regex = new RegExp(`(${keyword})`, 'gi');
-    return text.replace(regex, '<span class="bg-yellow-300 dark:bg-yellow-600">$1</span>');
-}
+    // Функция "тика" симуляции
+    function ticked() {
+      link
+        .attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
 
-    const toggle = document.getElementById('dark-mode-toggle');
-    const lightIcon = document.getElementById('light-theme-icon');
-    const darkIcon = document.getElementById('dark-theme-icon');
+      node
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y);
 
-    toggle.addEventListener('click', () => {
-        document.documentElement.classList.toggle('dark');
-        lightIcon.classList.toggle('hidden');
-        darkIcon.classList.toggle('hidden');
-    });
-</script>
+      text
+        .attr("x", d => d.x + 15) // небольшое смещение текста
+        .attr("y", d => d.y + 3);
+    }
 
+    // Темная/светлая тема (простая логика переключения)
+    const darkModeBtn = document.getElementById("dark-mode-toggle");
+    const lightIcon = document.getElementById("light-theme-icon");
+    const darkIcon = document.getElementById("dark-theme-icon");
+
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      // Переключаем иконки
+      if (document.documentElement.classList.contains('dark')) {
+        lightIcon.classList.remove('hidden');
+        darkIcon.classList.add('hidden');
+      } else {
+        lightIcon.classList.add('hidden');
+        darkIcon.classList.remove('hidden');
+      }
+    }
+
+    darkModeBtn.addEventListener("click", toggleDarkMode);
+  </script>
 </body>
 </html>
