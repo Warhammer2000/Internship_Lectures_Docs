@@ -528,20 +528,13 @@
                 const user = document.getElementById('userInput').value;
                 const message = document.getElementById('messageInput').value;
 
-                // --- Заглушка: имитация отправки сообщения ---
                 const messagesList = document.getElementById('messagesList');
                 const newMessageItem = document.createElement('li');
                 newMessageItem.textContent = `Отправлено сообщение от ${user}: ${message}`;
                 messagesList.appendChild(newMessageItem);
                 console.log(`Имитация отправки сообщения от ${user}: ${message}`);
 
-                // Очистка полей ввода после "отправки"
                 document.getElementById('messageInput').value = '';
-
-                // --- Раскомментируйте этот блок, когда сервер будет готов обрабатывать сообщения ---
-                // connection.invoke("SendMessageToServer", user, message).catch(function (err) {
-                //     return console.error("Ошибка отправки сообщения: ", err.toString());
-                // });
             });
         });
     </script>
