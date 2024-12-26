@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker: Погружение в контейнеризацию</title>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://unpkg.com/three@0.126.1/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://unpkg.com/three@0.126.1/examples/js/loaders/GLTFLoader.js"></script>
+
+    
+    <style>
+        /* Стили для подсказок */
+        .tooltip { /* ... (оставьте как есть) ... */ }
+        .tooltip .tooltip-icon { /* ... (оставьте как есть) ... */ }
+        .tooltip .tooltip-content { /* ... (оставьте как есть) ... */ }
+        .tooltip:hover .tooltip-content { /* ... (оставьте как есть) ... */ }
+        /* Стили для 3D контейнера */
+        .three-container {
+            width: 100%;
+            height: 600px; /* Увеличена высота */
+        }
+    </style>
+    <script>
+        // Проверка на сохраненную тему и ее применение
+        function applyTheme(theme) { /* ... (оставьте как есть) ... */ }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Установка текущей темы
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                applyTheme('dark');
+            } else {
+                applyTheme('light');
+            }
+
+            // Обработка переключения темы
+            document.getElementById('dark-mode-toggle').addEventListener('click', function () {
+                if (document.documentElement.classList.contains('dark')) {
+                    applyTheme('light');
+                } else {
+                    applyTheme('dark');
+                }
+            });
+
+            // Инициализация анимаций Docker
+            initDockerAnimations();
+        });
+
+        function initDockerAnimations() {
+            initContainerLifecycleAnimation();
+        }
+
+        function initContainerLifecycleAnimation() {
+            const container = document.getElementById('container-lifecycle-canvas');
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x1e1e1e); // Более темный, эффектный фон
+            const camera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: container, antialias: true });
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true; // Плавное движение камеры
+            controls.dampingFactor = 0.05;
+
+            const gltfLoader = new THREE.GLTFLoader();
+            let dockerContainer;
+
+            // Освещение
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 10, 5);
+            scene.add(directionalLight);
+
+            const pointLight = new THREE.PointLight(0xff9900, 1, 10); // Оранжевый свет для акцента
+            pointLight.position.set(-2, 3, 2);
+            scene.add(pointLight);
+
+            camera.position.set(5, 3, 5);
+            controls.target.set(0, 0.5, 0); // Фокус камеры
+            controls.update();
+
+            let animationTimeline = gsap.timeline();
+
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            gltfLoader.load('/models/docker_container/scene.gltf', (gltf) => {
+                dockerContainer = gltf.scene;
+                dockerContainer.scale.set(0.01, 0.01, 0.01); // Начальный размер
+                scene.add(dockerContainer);
+                dockerContainer.visible = false; // Скрыть при загрузке
+
+                document.getElementById('create-container').onclick = () => {
+                    animationTimeline.restart();
+                    animationTimeline.clear();
+                    dockerContainer.visible = true;
+                    gsap.to(dockerContainer.scale, { duration: 1.5, x: 0.8, y: 0.8, z: 0.8, ease: "elastic.out(1, 0.7)" });
+                    gsap.from(dockerContainer.rotation, { duration: 1, y: -Math.PI * 2, ease: "power2.out" }, "<0.2");
+                };
+
+                document.getElementById('start-container').onclick = () => {
+                    animationTimeline.restart();
+                    animationTimeline.clear();
+                    gsap.to(pointLight.intensity, { duration: 1, value: 2, ease: "power2.inOut" }); // Усиление света
+                    gsap.to(dockerContainer.position, { duration: 1, y: 0.2, ease: "bounce.out" });
+                    gsap.to(dockerContainer.rotation.y, { duration: 2, value: Math.PI * 2, ease: "power1.inOut", repeat: -1 }); // Вращение
+                };
+
+                document.getElementById('pause-container').onclick = () => {
+                    animationTimeline.restart();
+                    animationTimeline.clear();
+                    gsap.to(pointLight.intensity, { duration: 0.5, value: 0.5, ease: "power2.inOut" }); // Уменьшение света
+                    gsap.to(dockerContainer.scale, { duration: 0.5, x: 0.6, y: 0.6, z: 0.6, ease: "power3.inOut" }); // Уменьшение
+                    gsap.to(dockerContainer.rotation, { duration: 0.5, y: dockerContainer.rotation.y, ease: "power3.inOut" }); // Заморозка вращения
+                    gsap.to(dockerContainer.position, { duration: 0.5, y: 0, ease: "power3.inOut" });
+                };
+
+                document.getElementById('stop-container').onclick = () => {
+                    animationTimeline.restart();
+                    animationTimeline.clear();
+                    gsap.to(pointLight.intensity, { duration: 0.8, value: 0, ease: "power2.inOut" }); // Гашение света
+                    gsap.to(dockerContainer.scale, { duration: 1, x: 0.001, y: 0.001, z: 0.001, ease: "power3.in" });
+                    gsap.to(dockerContainer.rotation, { duration: 1, y: 0, ease: "power3.in" }, "<");
+                    gsap.to(dockerContainer.position, { duration: 1, y: -2, ease: "power3.in" }, "<");
+                    animationTimeline.call(() => { dockerContainer.visible = false; });
+                };
+            }, undefined, function (error) {
+                console.error('An error happened loading the GLTF model', error);
+            });
+        }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
+
+<!-- Навигационная панель -->
+<nav class="bg-white dark:bg-gray-800 shadow fixed w-full z-10 top-0">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="#" class="text-2xl font-bold text-blue-600 dark:text-blue-400">Docker Doc</a>
+        <div class="hidden md:flex space-x-4">
+            <a href="#intro" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Введение</a>
+            <a href="#what-is-docker" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Что такое Docker</a>
+            <a href="#container-lifecycle" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Жизненный цикл контейнера</a>
+            <a href="#images-and-registries" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Образы и реестры</a>
+            <a href="#conclusion" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Заключение</a>
+        </div>
+        <div class="flex items-center">
+            <button id="dark-mode-toggle" class="text-gray-500 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400 rounded-full p-2">
+                <!-- Иконка для светлой темы -->
+                <svg id="light-theme-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.02 12.02l-.707.707M6.343 17.657l-.707.707"></path>
+                    <circle cx="12" cy="12" r="5"></circle>
+                </svg>
+                <!-- Иконка для темной темы -->
+                <svg id="dark-theme-icon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Основной контент -->
+<div class="container mx-auto px-4 py-16 mt-16">
+    <header class="text-center mb-10">
+        <h1 class="text-4xl font-semibold text-blue-600 dark:text-blue-400">Docker: Погружение в контейнеризацию</h1>
+        <p class="text-lg text-gray-700 dark:text-gray-300 mt-2">Изучите основы и ключевые концепции Docker с захватывающими 3D визуализациями.</p>
+    </header>
+
+    <section id="intro" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Введение</h2>
+        <p class="text-lg leading-relaxed">
+            Docker — это передовая платформа для разработки, доставки и запуска приложений в контейнерах. Контейнеры позволяют упаковать приложение со всеми его зависимостями в изолированный и воспроизводимый блок, гарантируя единообразную работу в любых средах.
+        </p>
+    </section>
+
+    <section id="what-is-docker" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Что такое Docker?</h2>
+        <p class="text-lg leading-relaxed">
+            В основе Docker лежит революционная концепция <span class="tooltip">контейнеризации<span class="tooltip-icon">?</span><span class="tooltip-content">Продвинутая форма виртуализации на уровне операционной системы, позволяющая запускать множество изолированных и независимых экземпляров приложений на одном физическом или виртуальном хосте.</span></span>. Контейнеры обеспечивают надежную изоляцию процессов, ресурсов и зависимостей, устраняя конфликты между приложениями и обеспечивая абсолютную воспроизводимость окружения.
+        </p>
+        <p class="text-lg leading-relaxed mt-4">
+            Ключевые преимущества Docker:
+        </p>
+        <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
+            <li><strong>Абсолютная изоляция:</strong> Каждое приложение функционирует в своем полностью изолированном контейнере, не влияя на другие.</li>
+            <li><strong>Беспрецедентная переносимость:</strong> Контейнеры работают идентично в любой среде, где установлен Docker, будь то ваш ноутбук, сервер в дата-центре или облачная платформа.</li>
+            <li><strong>Динамическая масштабируемость:</strong> Масштабирование приложений становится тривиальной задачей, благодаря возможности запуска множества экземпляров контейнеров по требованию.</li>
+            <li><strong>Максимальная эффективность:</strong> Контейнеры используют ресурсы системы значительно эффективнее, чем традиционные виртуальные машины, обеспечивая более высокую плотность размещения приложений.</li>
+        </ul>
+    </section>
+
+    <section id="container-lifecycle" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Жизненный цикл контейнера</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            Контейнер Docker проходит через захватывающие этапы своего жизненного цикла. Давайте исследуем это наглядно в впечатляющей 3D визуализации:
+        </p>
+        <div class="three-container">
+            <canvas id="container-lifecycle-canvas"></canvas>
+        </div>
+        <div class="flex justify-around mt-4">
+            <button id="create-container" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Создание</button>
+            <button id="start-container" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Запуск</button>
+            <button id="pause-container" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Пауза</button>
+            <button id="stop-container" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Завершение</button>
+        </div>
+        <p class="text-lg leading-relaxed mt-4">
+            <strong>Создание:</strong> Контейнер возникает из образа, словно из чертежа, но пока не активен.
+            <strong>Запуск:</strong> Контейнер оживает, запуская процессы, определенные в его образе. Вы увидите, как внутри него зарождается жизнь!
+            <strong>Пауза:</strong> Работающий контейнер временно приостанавливает свою деятельность, подобно спящему механизму, сохраняя свое текущее состояние.
+            <strong>Завершение:</strong> Контейнер останавливается, его внутренние процессы замирают, и он перестает потреблять ресурсы, словно растворяясь в ничто.
+        </p>
+    </section>
+
+    <section id="images-and-registries" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Образы и реестры</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            <span class="tooltip">Образ Docker<span class="tooltip-icon">?</span><span class="tooltip-content">Высокоэффективный шаблон, служащий основой для создания контейнеров. Он включает в себя все необходимые компоненты для запуска приложения: исходный код, исполняемые файлы, библиотеки, переменные окружения и конфигурационные файлы.</span></span> — это легкий, самодостаточный и готовый к исполнению пакет программного обеспечения, содержащий все необходимое для запуска вашего приложения.
+        </p>
+        <p class="text-lg leading-relaxed mb-4">
+            <span class="tooltip">Реестр Docker<span class="tooltip-icon">?</span><span class="tooltip-content">Централизованный сервис, предназначенный для хранения и распространения образов Docker. Docker Hub является крупнейшим публичным реестром, предоставляющим доступ к миллионам готовых образов, но также существуют и частные реестры для корпоративного использования.</span></span> — это место, где хранятся и откуда распространяются образы Docker. Docker Hub — это огромный публичный реестр, где вы можете найти и скачать практически любой необходимый образ.
+        </p>
+        <p class="text-lg leading-relaxed">
+            Основные команды для работы с образами:
+        </p>
+        <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
+            <li><code>docker pull <image_name></code>: Мгновенная загрузка образа из указанного реестра.</li>
+            <li><code>docker images</code>: Отображение списка всех локально сохраненных образов на вашей машине.</li>
+            <li><code>docker push <username/image_name></code>: Публикация созданного вами образа в реестре, делая его доступным для других.</li>
+        </ul>
+    </section>
+
+    <section id="conclusion" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Заключение</h2>
+        <p class="text-lg leading-relaxed">
+            Docker — это мощнейший инструмент, который кардинально упрощает процессы разработки и развертывания приложений. Глубокое понимание ключевых концепций, таких как контейнеры, образы и их захватывающий жизненный цикл, является залогом эффективного использования Docker в ваших проектах и открытия новых горизонтов в мире разработки.
+        </p>
+    </section>
+
+</div>
+
+<footer class="text-center bg-blue-600 dark:bg-blue-400 text-white dark:text-gray-900 py-6 mt-10 rounded-lg">
+    2023 Документация по Docker: Новое измерение
+</footer>
+
+</body>
+</html>
