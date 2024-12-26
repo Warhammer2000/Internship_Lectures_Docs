@@ -6,27 +6,86 @@
     <title>Docker: Погружение в контейнеризацию</title>
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-    <script src="https://unpkg.com/three@0.126.1/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://unpkg.com/three@0.126.1/examples/js/loaders/GLTFLoader.js"></script>
 
-    
     <style>
         /* Стили для подсказок */
-        .tooltip { /* ... (оставьте как есть) ... */ }
-        .tooltip .tooltip-icon { /* ... (оставьте как есть) ... */ }
-        .tooltip .tooltip-content { /* ... (оставьте как есть) ... */ }
-        .tooltip:hover .tooltip-content { /* ... (оставьте как есть) ... */ }
-        /* Стили для 3D контейнера */
-        .three-container {
-            width: 100%;
-            height: 600px; /* Увеличена высота */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltip-icon {
+            background-color: #ccc;
+            color: black;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        .tooltip .tooltip-content {
+            visibility: hidden;
+            width: 250px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip .tooltip-content::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: black transparent transparent transparent;
+        }
+        .tooltip:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+        /* Стили для кода */
+        .code-block {
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: monospace;
+            margin-bottom: 10px;
+        }
+        .dark .code-block {
+            background-color: #333;
+            color: #f0f0f0;
         }
     </style>
     <script>
         // Проверка на сохраненную тему и ее применение
-        function applyTheme(theme) { /* ... (оставьте как есть) ... */ }
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('light-theme-icon').classList.add('hidden');
+                document.getElementById('dark-theme-icon').classList.remove('hidden');
+                localStorage.theme = 'dark';
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('dark-theme-icon').classList.add('hidden');
+                document.getElementById('light-theme-icon').classList.remove('hidden');
+                localStorage.theme = 'light';
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', function () {
             // Установка текущей темы
@@ -44,100 +103,7 @@
                     applyTheme('dark');
                 }
             });
-
-            // Инициализация анимаций Docker
-            initDockerAnimations();
         });
-
-        function initDockerAnimations() {
-            initContainerLifecycleAnimation();
-        }
-
-        function initContainerLifecycleAnimation() {
-            const container = document.getElementById('container-lifecycle-canvas');
-            const scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x1e1e1e); // Более темный, эффектный фон
-            const camera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ canvas: container, antialias: true });
-            renderer.setSize(container.offsetWidth, container.offsetHeight);
-
-            const controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true; // Плавное движение камеры
-            controls.dampingFactor = 0.05;
-
-            const gltfLoader = new THREE.GLTFLoader();
-            let dockerContainer;
-
-            // Освещение
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
-            scene.add(ambientLight);
-
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(5, 10, 5);
-            scene.add(directionalLight);
-
-            const pointLight = new THREE.PointLight(0xff9900, 1, 10); // Оранжевый свет для акцента
-            pointLight.position.set(-2, 3, 2);
-            scene.add(pointLight);
-
-            camera.position.set(5, 3, 5);
-            controls.target.set(0, 0.5, 0); // Фокус камеры
-            controls.update();
-
-            let animationTimeline = gsap.timeline();
-
-            function animate() {
-                requestAnimationFrame(animate);
-                controls.update();
-                renderer.render(scene, camera);
-            }
-
-            animate();
-
-            gltfLoader.load('/models/docker_container/scene.gltf', (gltf) => {
-                dockerContainer = gltf.scene;
-                dockerContainer.scale.set(0.01, 0.01, 0.01); // Начальный размер
-                scene.add(dockerContainer);
-                dockerContainer.visible = false; // Скрыть при загрузке
-
-                document.getElementById('create-container').onclick = () => {
-                    animationTimeline.restart();
-                    animationTimeline.clear();
-                    dockerContainer.visible = true;
-                    gsap.to(dockerContainer.scale, { duration: 1.5, x: 0.8, y: 0.8, z: 0.8, ease: "elastic.out(1, 0.7)" });
-                    gsap.from(dockerContainer.rotation, { duration: 1, y: -Math.PI * 2, ease: "power2.out" }, "<0.2");
-                };
-
-                document.getElementById('start-container').onclick = () => {
-                    animationTimeline.restart();
-                    animationTimeline.clear();
-                    gsap.to(pointLight.intensity, { duration: 1, value: 2, ease: "power2.inOut" }); // Усиление света
-                    gsap.to(dockerContainer.position, { duration: 1, y: 0.2, ease: "bounce.out" });
-                    gsap.to(dockerContainer.rotation.y, { duration: 2, value: Math.PI * 2, ease: "power1.inOut", repeat: -1 }); // Вращение
-                };
-
-                document.getElementById('pause-container').onclick = () => {
-                    animationTimeline.restart();
-                    animationTimeline.clear();
-                    gsap.to(pointLight.intensity, { duration: 0.5, value: 0.5, ease: "power2.inOut" }); // Уменьшение света
-                    gsap.to(dockerContainer.scale, { duration: 0.5, x: 0.6, y: 0.6, z: 0.6, ease: "power3.inOut" }); // Уменьшение
-                    gsap.to(dockerContainer.rotation, { duration: 0.5, y: dockerContainer.rotation.y, ease: "power3.inOut" }); // Заморозка вращения
-                    gsap.to(dockerContainer.position, { duration: 0.5, y: 0, ease: "power3.inOut" });
-                };
-
-                document.getElementById('stop-container').onclick = () => {
-                    animationTimeline.restart();
-                    animationTimeline.clear();
-                    gsap.to(pointLight.intensity, { duration: 0.8, value: 0, ease: "power2.inOut" }); // Гашение света
-                    gsap.to(dockerContainer.scale, { duration: 1, x: 0.001, y: 0.001, z: 0.001, ease: "power3.in" });
-                    gsap.to(dockerContainer.rotation, { duration: 1, y: 0, ease: "power3.in" }, "<");
-                    gsap.to(dockerContainer.position, { duration: 1, y: -2, ease: "power3.in" }, "<");
-                    animationTimeline.call(() => { dockerContainer.visible = false; });
-                };
-            }, undefined, function (error) {
-                console.error('An error happened loading the GLTF model', error);
-            });
-        }
     </script>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
@@ -150,6 +116,10 @@
             <a href="#intro" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Введение</a>
             <a href="#what-is-docker" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Что такое Docker</a>
             <a href="#container-lifecycle" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Жизненный цикл контейнера</a>
+            <a href="#dockerfile" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Dockerfile: Сборка образов</a>
+            <a href="#networking" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Сети в Docker</a>
+            <a href="#volumes" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Тома данных</a>
+            <a href="#docker-compose" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Docker Compose</a>
             <a href="#images-and-registries" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Образы и реестры</a>
             <a href="#conclusion" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-lg">Заключение</a>
         </div>
@@ -173,7 +143,7 @@
 <div class="container mx-auto px-4 py-16 mt-16">
     <header class="text-center mb-10">
         <h1 class="text-4xl font-semibold text-blue-600 dark:text-blue-400">Docker: Погружение в контейнеризацию</h1>
-        <p class="text-lg text-gray-700 dark:text-gray-300 mt-2">Изучите основы и ключевые концепции Docker с захватывающими 3D визуализациями.</p>
+        <p class="text-lg text-gray-700 dark:text-gray-300 mt-2">Изучите основы и ключевые концепции Docker.</p>
     </header>
 
     <section id="intro" class="mb-10">
@@ -202,54 +172,198 @@
     <section id="container-lifecycle" class="mb-10">
         <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Жизненный цикл контейнера</h2>
         <p class="text-lg leading-relaxed mb-4">
-            Контейнер Docker проходит через захватывающие этапы своего жизненного цикла. Давайте исследуем это наглядно в впечатляющей 3D визуализации:
+            Контейнер Docker проходит через определенные этапы в своем жизненном цикле:
         </p>
-        <div class="three-container">
-            <canvas id="container-lifecycle-canvas"></canvas>
+        <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
+            <li><strong>Создание (Created):</strong> Контейнер создается из образа, но еще не запущен. На этом этапе выделяются ресурсы, необходимые для его работы.</li>
+            <li><strong>Запуск (Running):</strong> Контейнер запущен и выполняет свою основную функцию. В этом состоянии процессы внутри контейнера активны.</li>
+            <li><strong>Приостановка (Paused):</strong> Контейнер временно приостановлен. Все процессы внутри замораживаются, но состояние контейнера сохраняется в памяти.</li>
+            <li><strong>Остановка (Stopped):</strong> Контейнер остановлен. Процессы внутри завершены, но контейнер можно перезапустить.</li>
+            <li><strong>Удаление (Deleted):</strong> Контейнер полностью удален, включая все его данные.</li>
+        </ul>
+        <p class="text-lg leading-relaxed mt-4">
+            Основные команды для управления жизненным циклом контейнера:
+        </p>
+        <div class="code-block">
+            <pre><code>docker create nginx:latest  # Создание контейнера из образа nginx
+docker start <имя_контейнера> # Запуск остановленного контейнера
+docker stop <имя_контейнера>  # Остановка запущенного контейнера
+docker pause <имя_контейнера> # Приостановка запущенного контейнера
+docker unpause <имя_контейнера> # Возобновление приостановленного контейнера
+docker restart <имя_контейнера> # Перезапуск контейнера
+docker rm <имя_контейнера>     # Удаление остановленного контейнера
+docker kill <имя_контейнера>   # Принудительная остановка контейнера
+</code></pre>
         </div>
-        <div class="flex justify-around mt-4">
-            <button id="create-container" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Создание</button>
-            <button id="start-container" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Запуск</button>
-            <button id="pause-container" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Пауза</button>
-            <button id="stop-container" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Завершение</button>
+    </section>
+
+    <section id="dockerfile" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Dockerfile: Сборка образов</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            <span class="tooltip">Dockerfile<span class="tooltip-icon">?</span><span class="tooltip-content">Текстовый документ, содержащий инструкции для сборки Docker-образа.</span></span> — это текстовый файл, содержащий все команды, необходимые для сборки Docker-образа. Docker считывает инструкции из Dockerfile для автоматизации процесса создания образа.
+        </p>
+        <p class="text-lg leading-relaxed mt-4">
+            Основные инструкции в Dockerfile:
+        </p>
+        <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
+            <li><strong>FROM:</strong> Определяет базовый образ, на основе которого будет построен новый образ.</li>
+            <li><strong>RUN:</strong> Выполняет команды внутри контейнера.</li>
+            <li><strong>COPY:</strong> Копирует файлы и директории из хоста в файловую систему контейнера.</li>
+            <li><strong>ADD:</strong> Аналогично COPY, но может распаковывать архивы и загружать файлы из URL.</li>
+            <li><strong>WORKDIR:</strong> Устанавливает рабочую директорию для последующих инструкций.</li>
+            <li><strong>EXPOSE:</strong> Обозначает порты, которые контейнер будет прослушивать во время выполнения.</li>
+            <li><strong>CMD:</strong> Задает команду, которая будет выполняться при запуске контейнера. Может быть только одна инструкция CMD.</li>
+            <li><strong>ENTRYPOINT:</strong> Задает исполняемый файл, который всегда запускается при старте контейнера.</li>
+            <li><strong>ENV:</strong> Устанавливает переменные окружения.</li>
+            <li><strong>VOLUME:</strong> Создает точку монтирования для доступа к томам данных.</li>
+            <li><strong>USER:</strong> Устанавливает имя пользователя или UID, используемый при выполнении следующих инструкций RUN, CMD и ENTRYPOINT.</li>
+        </ul>
+        <p class="text-lg leading-relaxed mt-4">
+            Пример простого Dockerfile для Node.js приложения:
+        </p>
+        <div class="code-block">
+            <pre><code>FROM node:16
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
+</code></pre>
+        </div>
+    </section>
+
+    <section id="networking" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Сети в Docker</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            Docker предоставляет различные варианты сетевого взаимодействия для контейнеров. Понимание сетевых концепций Docker критически важно для построения многоконтейнерных приложений.
+        </p>
+        <p class="text-lg leading-relaxed mt-4">
+            Основные типы сетей в Docker:
+        </p>
+        <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
+            <li><strong>bridge:</strong> Сеть по умолчанию. Контейнеры, подключенные к этой сети, могут взаимодействовать друг с другом.</li>
+            <li><strong>host:</strong> Контейнер использует сетевой стек хост-машины напрямую, без изоляции.</li>
+            <li><strong>none:</strong> Контейнер полностью изолирован от сети.</li>
+            <li><strong>macvlan:</strong> Назначает контейнерам MAC-адреса, позволяя им появляться как физические устройства в сети.</li>
+            <li><strong>overlay:</strong> Используется для связи контейнеров, запущенных на разных хостах Docker Swarm.</li>
+        </ul>
+        <p class="text-lg leading-relaxed mt-4">
+            Управление сетями Docker осуществляется с помощью команды <code>docker network</code>:
+        </p>
+        <div class="code-block">
+            <pre><code>docker network create my-network   # Создание новой сети
+docker network ls                 # Просмотр списка сетей
+docker network connect my-network my-container # Подключение контейнера к сети
+docker network disconnect my-network my-container # Отключение контейнера от сети
+</code></pre>
+        </div>
+    </section>
+
+    <section id="volumes" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Тома данных</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            Тома Docker предоставляют механизм для сохранения данных, генерируемых контейнерами, независимо от жизненного цикла контейнера. Это позволяет данным переживать перезапуск и удаление контейнеров.
+        </p>
+        <p class="text-lg leading-relaxed mt-4">
+            Типы томов данных:
+        </p>
+        <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
+            <li><strong>Тома (Volumes):</strong> Управляются Docker, хранятся в файловой системе хоста в области управления Docker.</li>
+            <li><strong>Монтирования привязки (Bind mounts):</strong> Произвольный файл или директория на хост-машине монтируется в контейнер.</li>
+            <li><strong>Монтирования tmpfs:</strong> Создаются в оперативной памяти хост-машины и не сохраняются на диске.</li>
+        </ul>
+        <p class="text-lg leading-relaxed mt-4">
+            Управление томами Docker с помощью команды <code>docker volume</code>:
+        </p>
+        <div class="code-block">
+            <pre><code>docker volume create my-volume   # Создание нового тома
+docker volume ls                 # Просмотр списка томов
+docker volume inspect my-volume  # Информация о томе
+docker volume rm my-volume       # Удаление тома
+
+docker run -d --name my-app -v my-volume:/data my-image  # Использование тома в контейнере
+docker run -d --name my-app -v /host/path:/container/path my-image # Использование монтирования привязки
+</code></pre>
+        </div>
+    </section>
+
+    <section id="docker-compose" class="mb-10">
+        <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Docker Compose</h2>
+        <p class="text-lg leading-relaxed mb-4">
+            <span class="tooltip">Docker Compose<span class="tooltip-icon">?</span><span class="tooltip-content">Инструмент для определения и запуска многоконтейнерных Docker-приложений.</span></span> — это инструмент для определения и запуска многоконтейнерных Docker-приложений. Compose использует YAML-файл для настройки служб вашего приложения.
+        </p>
+        <p class="text-lg leading-relaxed mt-4">
+            Пример файла `docker-compose.yml` для запуска веб-приложения и базы данных:
+        </p>
+        <div class="code-block">
+            <pre><code>version: "3.9"
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./html:/usr/share/nginx/html
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+</code></pre>
         </div>
         <p class="text-lg leading-relaxed mt-4">
-            <strong>Создание:</strong> Контейнер возникает из образа, словно из чертежа, но пока не активен.
-            <strong>Запуск:</strong> Контейнер оживает, запуская процессы, определенные в его образе. Вы увидите, как внутри него зарождается жизнь!
-            <strong>Пауза:</strong> Работающий контейнер временно приостанавливает свою деятельность, подобно спящему механизму, сохраняя свое текущее состояние.
-            <strong>Завершение:</strong> Контейнер останавливается, его внутренние процессы замирают, и он перестает потреблять ресурсы, словно растворяясь в ничто.
+            Основные команды Docker Compose:
         </p>
+        <div class="code-block">
+            <pre><code>docker-compose up -d   # Запуск приложений, определенных в docker-compose.yml в фоновом режиме
+docker-compose down     # Остановка и удаление контейнеров, сетей, томов и образов
+docker-compose ps       # Просмотр состояния запущенных сервисов
+docker-compose logs <service_name> # Просмотр логов определенного сервиса
+</code></pre>
+        </div>
     </section>
 
     <section id="images-and-registries" class="mb-10">
         <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Образы и реестры</h2>
         <p class="text-lg leading-relaxed mb-4">
-            <span class="tooltip">Образ Docker<span class="tooltip-icon">?</span><span class="tooltip-content">Высокоэффективный шаблон, служащий основой для создания контейнеров. Он включает в себя все необходимые компоненты для запуска приложения: исходный код, исполняемые файлы, библиотеки, переменные окружения и конфигурационные файлы.</span></span> — это легкий, самодостаточный и готовый к исполнению пакет программного обеспечения, содержащий все необходимое для запуска вашего приложения.
+            <span class="tooltip">Образ Docker<span class="tooltip-icon">?</span><span class="tooltip-content">Шаблон, используемый для создания контейнеров. Он содержит все необходимое для запуска приложения.</span></span> — это шаблон, на основе которого создаются контейнеры. Он включает в себя код приложения, библиотеки, настройки и зависимости. Образы состоят из нескольких слоев, что оптимизирует их хранение и распространение.
         </p>
         <p class="text-lg leading-relaxed mb-4">
-            <span class="tooltip">Реестр Docker<span class="tooltip-icon">?</span><span class="tooltip-content">Централизованный сервис, предназначенный для хранения и распространения образов Docker. Docker Hub является крупнейшим публичным реестром, предоставляющим доступ к миллионам готовых образов, но также существуют и частные реестры для корпоративного использования.</span></span> — это место, где хранятся и откуда распространяются образы Docker. Docker Hub — это огромный публичный реестр, где вы можете найти и скачать практически любой необходимый образ.
+            <span class="tooltip">Реестр Docker<span class="tooltip-icon">?</span><span class="tooltip-content">Место хранения и распространения образов Docker. Docker Hub является публичным реестром.</span></span> — это место, где хранятся и откуда можно скачать образы Docker. Самым известным публичным реестром является Docker Hub. Существуют также частные реестры для хранения корпоративных образов.
         </p>
         <p class="text-lg leading-relaxed">
             Основные команды для работы с образами:
         </p>
-        <ul class="list-disc list-inside pl-4 text-lg leading-relaxed">
-            <li><code>docker pull <image_name></code>: Мгновенная загрузка образа из указанного реестра.</li>
-            <li><code>docker images</code>: Отображение списка всех локально сохраненных образов на вашей машине.</li>
-            <li><code>docker push <username/image_name></code>: Публикация созданного вами образа в реестре, делая его доступным для других.</li>
-        </ul>
+        <div class="code-block">
+            <pre><code>docker pull nginx:latest        # Скачивание образа с тегом 'latest' из Docker Hub
+docker images                  # Просмотр списка локальных образов
+docker rmi <image_id>          # Удаление локального образа
+docker build -t my-image:v1 . # Сборка образа из Dockerfile в текущей директории и присвоение ему имени и тега
+docker tag local-image:tag new-repo:tag  # Создание тега для образа
+docker login                   # Аутентификация в реестре Docker
+docker push username/my-image:v1 # Отправка образа в реестр
+</code></pre>
+        </div>
     </section>
 
     <section id="conclusion" class="mb-10">
         <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-400 relative mb-6">Заключение</h2>
         <p class="text-lg leading-relaxed">
-            Docker — это мощнейший инструмент, который кардинально упрощает процессы разработки и развертывания приложений. Глубокое понимание ключевых концепций, таких как контейнеры, образы и их захватывающий жизненный цикл, является залогом эффективного использования Docker в ваших проектах и открытия новых горизонтов в мире разработки.
+            Docker — это мощный инструмент, упрощающий разработку и развертывание приложений. Понимание основных концепций, таких как образы, контейнеры, сети и тома, а также использование Dockerfile и Docker Compose, поможет вам эффективно использовать Docker в своих проектах и оптимизировать рабочие процессы.
         </p>
     </section>
 
 </div>
 
 <footer class="text-center bg-blue-600 dark:bg-blue-400 text-white dark:text-gray-900 py-6 mt-10 rounded-lg">
-    2023 Документация по Docker: Новое измерение
+    2023 Документация по Docker
 </footer>
 
 </body>
